@@ -7,7 +7,7 @@ const Navbar = () => {
 
     return (
         <nav className="">
-            <div className="px-4 sm:px-6 lg:px-[12rem]">
+            <div className="px-4 sm:px-6 lg:px-[8rem]">
 
                 <div className="flex items-center justify-between h-16">
 

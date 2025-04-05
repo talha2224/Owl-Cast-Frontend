@@ -57,7 +57,7 @@ const LandingPage = () => {
                 <button className='text-white px-8 py-2 rounded-full mt-2' style={{ background: 'linear-gradient(90deg, #E54B3C 0%, #FF1700 100%)', }}>Explore</button>
             </div>
 
-            <div className='px-4 sm:px-6 lg:px-[12rem] pt-10 pb-10'>
+            <div className='px-4 sm:px-6 lg:px-[8rem] pt-10 pb-10'>
 
                 <div className='flex justify-center items-center flex-col'>
                     <p className='text-[2.2rem] text-center font-semibold'>Do you really love music?</p>
@@ -148,7 +148,7 @@ const LandingPage = () => {
 
             </div>
 
-            <div className='mt-10 bg-[#F9F9F9] p-10 flex justify-center items-center gap-x-12 flex-wrap sm:px-6 lg:px-[12rem]'>
+            <div className='mt-10 bg-[#F9F9F9] p-10 flex justify-center items-center gap-x-12 flex-wrap sm:px-6 lg:px-[8rem]'>
                 {/* Podcast Card 1 */}
                 <div className='bg-white rounded-2xl shadow-md overflow-hidden w-full max-w-sm mt-2'>
                     <div className='relative'>
@@ -211,7 +211,7 @@ const LandingPage = () => {
 
             {/* FAQS  */}
 
-            <div className="flex justify-center items-center px-4 sm:px-6 lg:px-[12rem] mt-10">
+            <div className="flex justify-center items-center px-4 sm:px-6 lg:px-[8rem] mt-10">
                 <div className="w-full max-w-lg">
                     <h1 className="text-2xl font-medium text-gray-900 mb-6">Questions? Answers.</h1>
                     <div className="mt-4">
@@ -231,7 +231,7 @@ const LandingPage = () => {
                 </div>
             </div>
 
-            <div className="flex justify-center items-center px-4 sm:px-6 lg:px-[12rem] mt-10">
+            <div className="flex justify-center items-center px-4 sm:px-6 lg:px-[8rem] mt-10">
 
                 <div style={{ background: 'linear-gradient(90deg, #E54B3C 0%, #FF1700 100%)', }} className='p-10 w-[100%] h-[19rem] flex justify-center items-center flex-col'>
                     <h1 className='text-2xl font-semibold text-white text-center'>Get 3 months of OwCast Music <br /> free with eligible devices</h1>
@@ -240,7 +240,7 @@ const LandingPage = () => {
 
             </div>
 
-            <div className="flex justify-center items-center px-4 sm:px-6 lg:px-[12rem] pb-10">
+            <div className="flex justify-center items-center px-4 sm:px-6 lg:px-[8rem] pb-10">
                 <div className="w-full bg-[#FAFAFA] p-10 rounded-lg">
                     <div className="text-center mb-6">
                         <h2 className="text-2xl font-semibold text-gray-800">Subscribe To Our Newsletter</h2>
@@ -259,7 +259,7 @@ const LandingPage = () => {
                     </div>
                 </div>
             </div>
-            <div className="flex justify-between items-center py-3 px-4 sm:px-6 lg:px-[12rem] bg-[#FAFAFA] flex-wrap">
+            <div className="flex justify-between items-center py-3 px-4 sm:px-6 lg:px-[8rem] bg-[#FAFAFA] flex-wrap">
 
                 <p className='text-[#7f7f7f] text-sm my-2'>Copyright © 2025 OwlCast. All rights reserved.</p>
 
