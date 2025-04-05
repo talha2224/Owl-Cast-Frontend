@@ -4,14 +4,15 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import React, { Suspense, lazy, useState, useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import LoaderGif from './assets/loader.gif';
-import ProfilePage from './pages/Dashboard/ProfilePage';
-import HotlinePage from './pages/Dashboard/HotlinePage';
-import SendPage from './pages/Dashboard/SendPage';
-import SettingsPage from './pages/Dashboard/SettingsPage';
+import PodcastPage from './pages/Dashboard/PodcastPage';
+import SinglePage from './pages/Dashboard/SinglePage';
+import MusicPage from './pages/Dashboard/MusicPage';
+import LibraryPage from './pages/Dashboard/LibraryPage';
 import LandingPage from './pages/LandingPage';
-import WalletHistoryPage from './pages/Dashboard/WalletHistoryPage';
+import ProfilePage from './pages/Dashboard/ProfilePage';
+
+
 import LoginPage from './pages/Auth/LoginPage';
-import VerifyPage from './pages/Auth/VerifyPage';
 import AdminHomePage from './pages/Admin/Dashboard/AdminHomePage';
 import AdminTransactionage from './pages/Admin/Dashboard/AdminTransactionage';
 import AdminUserPage from './pages/Admin/Dashboard/AdminUserPage';
@@ -60,17 +61,15 @@ function App() {
 
             <Route path='/login' element={<LoginPage />} />
             <Route path='/register' element={<RegisterPage />} />
-            <Route path='/verify' element={<VerifyPage />} />
-
 
 
             <Route path="/dashboard/" element={<Layout />}>
               <Route path="home" element={<HomePage />} />
-              <Route path="profile" element={<ProfilePage />} />
-              <Route path="hotline" element={<HotlinePage />} />
-              <Route path="send" element={<SendPage />} />
-              <Route path="settings" element={<SettingsPage />} />
-              <Route path="wallet" element={<WalletHistoryPage/>} />
+              <Route path="podcast" element={<PodcastPage />} />
+              <Route path="podcast/single/:id" element={<SinglePage />} />
+              <Route path="music" element={<MusicPage />} />
+              <Route path="library" element={<LibraryPage />} />
+              <Route path="profile" element={<ProfilePage/>} />
             </Route>
 
 

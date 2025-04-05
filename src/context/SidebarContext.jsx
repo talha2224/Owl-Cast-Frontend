@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
+import { ThemeProvider } from './ThemeContext';
 
 const NavContext = createContext(null);
 
@@ -10,7 +11,10 @@ export const SidebarContext = ({ children }) => {
 
   return (
     <NavContext.Provider value={{ isNavOpen, toggleNav }}>
-      {children}
+      <ThemeProvider>
+        {children}
+      </ThemeProvider>
+
     </NavContext.Provider>
   );
 };

@@ -3,19 +3,35 @@ import { MdDashboard, MdOutlineSyncAlt } from 'react-icons/md';
 import { RiFilePaperLine } from "react-icons/ri";
 import { HiOutlineNewspaper } from "react-icons/hi2";
 import { LuUser } from "react-icons/lu";
+import { RiHome5Fill } from "react-icons/ri";
+import { FaPodcast } from "react-icons/fa6";
+import { FaMusic } from "react-icons/fa";
+import { IoLibrarySharp } from "react-icons/io5";
 
 export const navData = [
     {
         id: 1,
-        link: "home",
+        link: "home?query=Music",
         name: "Home",
-        icon: <MdDashboard />
+        icon: <RiHome5Fill />
     },
     {
         id: 7,
-        link: "hotline",
-        name: "HotLine",
-        icon: <IoCall   />
+        link: "podcast",
+        name: "Podcast",
+        icon: <FaPodcast/>
+    },
+    {
+        id: 8,
+        link: "music",
+        name: "Music",
+        icon: <FaMusic/>
+    },
+    {
+        id: 9,
+        link: "library",
+        name: "Library",
+        icon: <IoLibrarySharp/>
     }
 ];
 
