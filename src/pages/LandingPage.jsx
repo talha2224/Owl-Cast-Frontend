@@ -101,7 +101,7 @@ const LandingPage = () => {
 
                 <div className='mt-10 flex justify-between items-center gap-x-[4rem] flex-wrap'>
 
-                    <div className='min-h-[30rem] md:min-w-[24rem] md:max-w-[24rem] w-[100%] mt-2 rounded-lg p-5 bg-[#FAFAFA]'>
+                    <div className='min-h-[30rem] md:min-w-[22rem] md:max-w-[22rem] w-[100%] mt-2 rounded-lg p-5 bg-[#FAFAFA]'>
                         <img src={RedLogo} alt="" />
                         <h1 className='mt-3 font-medium text-lg'>Student</h1>
                         <p className='text-[#7F7F7F] text-sm'>Simple pricing. No hidden fees</p>
@@ -115,7 +115,7 @@ const LandingPage = () => {
                         <div className='text-[#7F7F7F] mb-1'>✔️ Sed ut perspiciatis unde omnis iste</div>
                     </div>
 
-                    <div style={{ background: 'linear-gradient(90deg, #E54B3C 0%, #FF1700 100%)', }} className='min-h-[30rem] md:min-w-[24rem] md:max-w-[24rem] w-[100%] mt-2 rounded-lg p-5 text-white'>
+                    <div style={{ background: 'linear-gradient(90deg, #E54B3C 0%, #FF1700 100%)', }} className='min-h-[30rem] md:min-w-[22rem] md:max-w-[22rem] w-[100%] mt-2 rounded-lg p-5 text-white'>
                         <img src={WhiteLogo} alt="" />
                         <h1 className='mt-3 font-medium text-lg'>Individual</h1>
                         <p className='text-sm'>Simple pricing. No hidden fees</p>
@@ -129,7 +129,7 @@ const LandingPage = () => {
                         <div className='text-[#FFC2BC] mb-1'>✔️ Sed ut perspiciatis unde omnis iste</div>
                     </div>
 
-                    <div className='min-h-[30rem] md:min-w-[24rem] md:max-w-[24rem] w-[100%] mt-2 rounded-lg p-5 bg-[#FAFAFA]'>
+                    <div className='min-h-[30rem] md:min-w-[22rem] md:max-w-[22rem] w-[100%] mt-2 rounded-lg p-5 bg-[#FAFAFA]'>
                         <img src={RedLogo} alt="" />
                         <h1 className='mt-3 font-medium text-lg'>Family</h1>
                         <p className='text-[#7F7F7F] text-sm'>Simple pricing. No hidden fees</p>
