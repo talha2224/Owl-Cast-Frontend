@@ -44,7 +44,7 @@ const Header = ({ location }) => {
             <div className='flex items-center gap-x-4'>
                 <GiHamburgerMenu className={`lg:hidden block cursor-pointer md:mt-0 mt-2 ${theme == "dark" ? "text-white" : 'text-[#444444]'}`} onClick={() => toggleNav(!isNavOpen)} />
                 <img src={Bell} alt="" />
-                <img onClick={()=>{nav("/dashboard/profile")}} src={User} alt="" className='rounded-full w-6 h-6 cursor-pointer md:mt-0 mt-2' />
+                <img onClick={()=>{nav("/creator/dashboard/profile")}} src={User} alt="" className='rounded-full w-6 h-6 cursor-pointer md:mt-0 mt-2' />
                 {
                     theme === "dark" ? (<FiSun onClick={toggleTheme} className='text-[#FFD700] cursor-pointer text-2xl md:mt-0 mt-2' />)
                         : (<FiMoon onClick={toggleTheme} className='text-[#4B6CB7] cursor-pointer text-2xl md:mt-0 mt-2' />)

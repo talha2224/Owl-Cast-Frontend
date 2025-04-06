@@ -18,6 +18,7 @@ import CreatorLibraryPage from './pages/Creator/CreatorLibraryPage';
 import CreatorAnalyticsPage from './pages/Creator/CreatorAnalyticsPage';
 import CreatorDraftPage from './pages/Creator/CreatorDraftPage';
 import CreatorMonetizationPage from './pages/Creator/CreatorMonetizationPage';
+import CreatorProfilePage from './pages/Creator/CreatorProfilePage';
 const RegisterPage = lazy(() => import('./pages/Auth/RegisterPage'));
 const Layout = lazy(() => import('./components/dashboard/Layout'));
 const CreatorLayout = lazy(() => import('./components/creator/Layout'));
@@ -73,7 +74,7 @@ function App() {
               <Route path="analytics" element={<CreatorAnalyticsPage />} />
               <Route path="draft" element={<CreatorDraftPage />} />
               <Route path="monetization" element={<CreatorMonetizationPage />} />
-              <Route path="profile" element={<ProfilePage/>} />
+              <Route path="profile" element={<CreatorProfilePage/>} />
             </Route>
 
 
