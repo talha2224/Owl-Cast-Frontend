@@ -19,9 +19,16 @@ import CreatorAnalyticsPage from './pages/Creator/CreatorAnalyticsPage';
 import CreatorDraftPage from './pages/Creator/CreatorDraftPage';
 import CreatorMonetizationPage from './pages/Creator/CreatorMonetizationPage';
 import CreatorProfilePage from './pages/Creator/CreatorProfilePage';
+import AdminLoginPage from './pages/Auth/Admin/AdminLoginPage';
+import AdminHomePage from './pages/Admin/AdminHomePage';
+import AdminUserPage from './pages/Admin/AdminUserPage';
+import AdminTransactionsPage from './pages/Admin/AdminTransactionsPage';
+import AdminSettingsPage from './pages/Admin/AdminSettingsPage';
+import AdminAnalyticsPage from './pages/Admin/AdminAnalyticsPage';
 const RegisterPage = lazy(() => import('./pages/Auth/RegisterPage'));
 const Layout = lazy(() => import('./components/dashboard/Layout'));
 const CreatorLayout = lazy(() => import('./components/creator/Layout'));
+const AdminLayout = lazy(() => import('./components/admin/Layout'));
 const HomePage = lazy(() => import('./pages/Dashboard/HomePage'));
 
 
@@ -58,6 +65,8 @@ function App() {
 
             <Route path='/creator/login' element={<CreatorLoginPage />} />
             <Route path='/creator/register' element={<CreatorRegisterPage />} />
+
+            <Route path='/admin/login' element={<AdminLoginPage/>} />
             
             <Route path="/dashboard/" element={<Layout />}>
               <Route path="home" element={<HomePage />} />
@@ -75,6 +84,15 @@ function App() {
               <Route path="draft" element={<CreatorDraftPage />} />
               <Route path="monetization" element={<CreatorMonetizationPage />} />
               <Route path="profile" element={<CreatorProfilePage/>} />
+            </Route>
+
+
+            <Route path="/admin/dashboard/" element={<AdminLayout />}>
+              <Route path="home" element={<AdminHomePage />} />
+              <Route path="user" element={<AdminUserPage />} />
+              <Route path="transactions" element={<AdminTransactionsPage />} />
+              <Route path="analytics" element={<AdminAnalyticsPage />} />
+              <Route path="settings" element={<AdminSettingsPage />} />
             </Route>
 
 

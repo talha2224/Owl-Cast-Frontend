@@ -1,11 +1,12 @@
-import { MdMonetizationOn } from 'react-icons/md';
+import { MdDashboard, MdMonetizationOn } from 'react-icons/md';
 import { RiHome5Fill } from "react-icons/ri";
-import { FaPodcast } from "react-icons/fa6";
-import { FaMusic } from "react-icons/fa";
+import { FaMoneyBill, FaPodcast, FaUser } from "react-icons/fa6";
+import { FaMusic, FaUsb } from "react-icons/fa";
 import { IoLibrarySharp } from "react-icons/io5";
 import { SiApplemusic } from "react-icons/si";
 import { MdLibraryMusic } from "react-icons/md";
 import { SiGoogleanalytics } from "react-icons/si";
+import { IoMdSettings } from 'react-icons/io';
 
 export const navData = [
     {
@@ -58,5 +59,38 @@ export const adminNav = [
         link: "monetization",
         name: "Monetization",
         icon: <MdMonetizationOn/>
+    }
+]
+
+export const superAdminNav = [
+    {
+        id: 1,
+        link: "home",
+        name: "Dashboard",
+        icon: <MdDashboard/>
+    },
+    {
+        id: 7,
+        link: "user",
+        name: "User management",
+        icon: <FaUser/>
+    },
+    {
+        id: 4,
+        link: "transactions",
+        name: "Transactions",
+        icon: <FaMoneyBill />
+    },
+    {
+        id: 41,
+        link: "analytics",
+        name: "Analytics",
+        icon: <SiGoogleanalytics/>
+    },
+    {
+        id: 44,
+        link: "settings",
+        name: "Settings",
+        icon: <IoMdSettings/>
     }
 ]
