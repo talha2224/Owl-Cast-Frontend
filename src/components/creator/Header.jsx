@@ -11,6 +11,7 @@ const Header = ({ location }) => {
     const { isNavOpen, toggleNav } = useSidebar();
     const nav = useNavigate()
     const currentLocation = useLocation();
+    const role = useLocation().pathname.split("/")[1];
     const queryParams = new URLSearchParams(currentLocation.search);
     const queryValue = queryParams.get('query');
 
@@ -20,7 +21,7 @@ const Header = ({ location }) => {
 
 
             {
-                location == "home" ? (
+                (location == "home"&& role!=="creator")? (
                     <div className='flex items-center gap-x-5 flex-wrap'>
                         <Link to={"/dashboard/home?query=Music"} className={`${queryValue == "Music" ? "text-[#FF1700]" : "text-[#444444]"}`}>Music</Link>
                         <Link to={"/dashboard/home?query=Podcast"} className={`${queryValue == "Podcast" ? "text-[#FF1700]" : "text-[#444444]"}`}>Podcast</Link>

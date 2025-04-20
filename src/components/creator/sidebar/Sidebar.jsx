@@ -9,7 +9,9 @@ import { FiPlus } from "react-icons/fi";
 
 import { useTheme } from '../../../context/ThemeContext';
 import { TiTick } from 'react-icons/ti';
-
+import axios from 'axios';
+import config from '../../../config'
+import toast from 'react-hot-toast';
 const Sidebar = () => {
   const { theme } = useTheme();
   const location = useLocation().pathname.split("/")[3];
@@ -17,30 +19,92 @@ const Sidebar = () => {
   const sidebarRef = useRef(null);
   const nav = useNavigate();
   const [initialStep, setinitialStep] = useState(0)
-  const [data, setData] = useState({ preferrence: "music" })
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [selectedImage2, setSelectedImage2] = useState(null);
+  const [data, setData] = useState({ type: "music", creatorId: localStorage.getItem("id"), playlistId:null,audio: null, image: null, title: "", description: "", tags: "", })
+  const [playlistName, setPlaylistName] = useState("")
+  const [showPlaylist, setShowPlaylist] = useState(false)
+  const [playlistData, setPlaylistData] = useState([])
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setSelectedImage(reader.result);
-      };
-      reader.readAsDataURL(file);
+      const previewUrl = URL.createObjectURL(file);
+      setData({ ...data, image: file,previewUrl });
     }
   };
+
   const handleImageUpload2 = (event) => {
     const file = event.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setSelectedImage2(reader.result);
-      };
-      reader.readAsDataURL(file);
+      const previewUrl = URL.createObjectURL(file);
+      setData({ ...data, audio: file,previewUrl2:previewUrl });
     }
   };
+
+  const fetchAllPlaylist = async () => {
+    try {
+      let playlist = await axios.get(`${config.baseUrl}/playlist/${localStorage.getItem("id")}`)
+      if (playlist?.data) {
+        setPlaylistData(playlist?.data?.data)
+      }
+    }
+    catch (error) {
+
+    }
+  }
+
+  const handleNext = () => {
+    console.log(data?.playlistId)
+    if (data.type == "Album") {
+      setShowPlaylist(true);
+      setinitialStep(0)
+    }
+    else {
+      setinitialStep(2)
+    }
+  }
+
+  const handleCreatePlaylist = async () => {
+    let loader = toast.loading("Creating Playlist")
+    try {
+      let res = await axios.post(`${config.baseUrl}/playlist/create`, { title: playlistName, userId: localStorage.getItem("id") })
+      if (res?.data?.data) {
+        fetchAllPlaylist()
+        toast.dismiss(loader)
+        toast.success("Playlist Added")
+      }
+    }
+    catch (error) {
+      toast.dismiss(loader)
+      toast.error("Something went wrong")
+    }
+  }
+
+  const handleUpload = async (status) => {
+    let loader = toast.loading("Uploading It Will Take Some Time");
+    try {
+      let formData = new FormData()
+      formData.append("type", data?.type)
+      formData.append("creatorId", data?.creatorId)
+      formData.append("playlistId", data?.playlistId)
+      formData.append("audio", data?.audio)
+      formData.append("image", data?.image)
+      formData.append("title", data?.title)
+      formData.append("description", data?.description)
+      formData.append("tags", data?.tags)
+      formData.append("status",status)
+      let res = await axios.post(`${config.baseUrl}/music/upload`, formData)
+      if (res?.data?.data) {
+        toast.dismiss(loader)
+        toast.success("Uploading Sucessfull")
+        setinitialStep(0)
+      }
+    }
+    catch (error) {
+      console.log(error)
+      toast.dismiss(loader)
+      toast.error("Something went wrong")
+    }
+  }
 
 
   useEffect(() => {
@@ -54,6 +118,11 @@ const Sidebar = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [toggleNav]);
+
+  useEffect(() => {
+    fetchAllPlaylist()
+  }, [])
+
 
 
 
@@ -107,7 +176,7 @@ const Sidebar = () => {
         </div>
 
         <div className='absolute bottom-5 w-[80%] flex justify-between items-center mx-5 '>
-          <div onClick={() => nav("/")} className='flex items-center gap-x-2 cursor-pointer'>
+          <div onClick={() => {localStorage.removeItem("id");nav("/")}} className='flex items-center gap-x-2 cursor-pointer'>
             <IoLogOut className='text-[#FF1700] cursor-pointer text-xl' />
             <p className='text-xs text-[#FF1700]'>Logout</p>
           </div>
@@ -161,7 +230,7 @@ const Sidebar = () => {
             </div>
 
             <div className='absolute bottom-5 w-[80%] flex justify-between items-center mx-5 '>
-              <div onClick={() => nav("/")} className='flex items-center gap-x-2 cursor-pointer'>
+              <div onClick={() => {localStorage.removeItem("id");nav("/")}} className='flex items-center gap-x-2 cursor-pointer'>
                 <IoLogOut className='text-[#FF1700] cursor-pointer text-xl' />
                 <p className='text-xs text-[#FF1700]'>Logout</p>
               </div>
@@ -175,7 +244,6 @@ const Sidebar = () => {
       {/* // MODELS  */}
       {initialStep === 1 && (
         <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50">
-
           <div className={`${theme === "dark" ? "bg-[#1A1A1B] text-gray-300" : "bg-white text-gray-700"} rounded-md shadow-lg p-6 w-full max-w-md`}>
 
             <div className="flex justify-between items-start mb-4">
@@ -190,24 +258,24 @@ const Sidebar = () => {
               </button>
             </div>
 
-            <div onClick={() => { setData({ ...data, preferrence: "Single" }) }} className='flex cursor-pointer justify-between items-center w-[100%] textsm text-white bg-[#262628] px-3 h-[2.5rem] border border-[#444444] mt-8 rounded-md text-sm'>
+            <div onClick={() => { setData({ ...data, type: "Single" }) }} className='flex cursor-pointer justify-between items-center w-[100%] textsm text-white bg-[#262628] px-3 h-[2.5rem] border border-[#444444] mt-8 rounded-md text-sm'>
               <p>Single</p>
-              {data?.preferrence == "Single" && <div style={{ background: 'linear-gradient(90deg, #E54B3C 0%, #FF1700 100%)', }} className='w-4 h-4 rounded-full flex justify-center items-center'><TiTick /></div>}
+              {data?.type == "Single" && <div style={{ background: 'linear-gradient(90deg, #E54B3C 0%, #FF1700 100%)', }} className='w-4 h-4 rounded-full flex justify-center items-center'><TiTick /></div>}
             </div>
-            <div onClick={() => { setData({ ...data, preferrence: "Podcast" }) }} className='flex cursor-pointer justify-between items-center w-[100%] textsm text-white bg-[#262628] px-3 h-[2.5rem] border border-[#444444] mt-2 rounded-md text-sm'>
+            <div onClick={() => { setData({ ...data, type: "Podcast" }) }} className='flex cursor-pointer justify-between items-center w-[100%] textsm text-white bg-[#262628] px-3 h-[2.5rem] border border-[#444444] mt-2 rounded-md text-sm'>
               <p>Podcast</p>
-              {data?.preferrence == "Podcast" && <div style={{ background: 'linear-gradient(90deg, #E54B3C 0%, #FF1700 100%)', }} className='w-4 h-4 rounded-full flex justify-center items-center'><TiTick /></div>}
+              {data?.type == "Podcast" && <div style={{ background: 'linear-gradient(90deg, #E54B3C 0%, #FF1700 100%)', }} className='w-4 h-4 rounded-full flex justify-center items-center'><TiTick /></div>}
             </div>
-            <div onClick={() => { setData({ ...data, preferrence: "Music" }) }} className='flex cursor-pointer justify-between items-center w-[100%] textsm text-white bg-[#262628] px-3 h-[2.5rem] border border-[#444444] my-2 rounded-md text-sm'>
+            <div onClick={() => { setData({ ...data, type: "Music" }) }} className='flex cursor-pointer justify-between items-center w-[100%] textsm text-white bg-[#262628] px-3 h-[2.5rem] border border-[#444444] my-2 rounded-md text-sm'>
               <p>Music</p>
-              {data?.preferrence == "Music" && <div style={{ background: 'linear-gradient(90deg, #E54B3C 0%, #FF1700 100%)', }} className='w-4 h-4 rounded-full flex justify-center items-center'><TiTick /></div>}
+              {data?.type == "Music" && <div style={{ background: 'linear-gradient(90deg, #E54B3C 0%, #FF1700 100%)', }} className='w-4 h-4 rounded-full flex justify-center items-center'><TiTick /></div>}
             </div>
-            <div onClick={() => { setData({ ...data, preferrence: "Album" }) }} className='flex cursor-pointer justify-between items-center w-[100%] textsm text-white bg-[#262628] px-3 h-[2.5rem] border border-[#444444] my-2 rounded-md text-sm'>
+            <div onClick={() => { setData({ ...data, type: "Album" }) }} className='flex cursor-pointer justify-between items-center w-[100%] textsm text-white bg-[#262628] px-3 h-[2.5rem] border border-[#444444] my-2 rounded-md text-sm'>
               <p>Album</p>
-              {data?.preferrence == "Album" && <div style={{ background: 'linear-gradient(90deg, #E54B3C 0%, #FF1700 100%)', }} className='w-4 h-4 rounded-full flex justify-center items-center'><TiTick /></div>}
+              {data?.type == "Album" && <div style={{ background: 'linear-gradient(90deg, #E54B3C 0%, #FF1700 100%)', }} className='w-4 h-4 rounded-full flex justify-center items-center'><TiTick /></div>}
             </div>
 
-            <button onClick={() => setinitialStep(2)} className="bg-[#FF1700] text-sm w-[100%] py-2 mt-2 rounded-md">Next</button>
+            <button onClick={handleNext} className="bg-[#FF1700] text-sm w-[100%] py-2 mt-2 rounded-md">Next</button>
 
           </div>
         </div>
@@ -230,8 +298,8 @@ const Sidebar = () => {
             </div>
 
             <label htmlFor="image-upload" className='w-[100%] h-[12rem] flex justify-center items-center flex-col rounded-lg bg-[#262628] cursor-pointer'>
-              {selectedImage ? (
-                <img src={selectedImage} alt="Uploaded Preview" className="w-full h-full object-contain rounded-lg" />
+              {data?.image ? (
+                <img src={data?.previewUrl} alt="Uploaded Preview" className="w-full h-full object-contain rounded-lg" />
               ) : (
                 <>
                   <p className='text-sm text-[#AAAAAA]'>Upload your image</p>
@@ -270,21 +338,16 @@ const Sidebar = () => {
             </div>
 
             <label htmlFor="image-upload2" className='w-[100%] h-[12rem] flex justify-center items-center flex-col rounded-lg bg-[#262628] cursor-pointer'>
-              {selectedImage2 ? (
-                <img src={selectedImage2} alt="Uploaded Preview" className="w-full h-full object-contain rounded-lg" />
+              {data?.audio ? (
+                <p>File Uploaded</p>
+                // <img src={data?.previewUrl2} alt="Uploaded Preview" className="w-full h-full object-contain rounded-lg" />
               ) : (
                 <>
-                  <p className='text-sm text-[#AAAAAA]'>Upload your image</p>
+                  <p className='text-sm text-[#AAAAAA]'>Upload your mp4 file</p>
                   <p className='text-sm text-[#FF1700]'>Min *390* x *190*</p>
                 </>
               )}
-              <input
-                id="image-upload2"
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleImageUpload2}
-              />
+              <input id="image-upload2" type="file" className="hidden" onChange={handleImageUpload2} />
             </label>
 
             <button onClick={() => setinitialStep(4)} className="bg-[#FF1700] text-sm w-[100%] py-2 mt-2 rounded-md">Next</button>
@@ -310,12 +373,49 @@ const Sidebar = () => {
             </div>
 
             <p className='text-sm'>Metadata</p>
-            <input type="text" name="" id="" placeholder='Title' className='w-[100%] h-[2.3rem] px-3 rounded-md border border-[#444444] bg-transparent mt-2 text-sm placeholder:text-sm' />
-            <input type="text" name="" id="" placeholder='Description' className='w-[100%] h-[2.3rem] px-3 rounded-md border border-[#444444] bg-transparent mt-2 text-sm placeholder:text-sm' />
-            <input type="text" name="" id="" placeholder='Tags / Keywords' className='w-[100%] h-[2.3rem] px-3 rounded-md border border-[#444444] bg-transparent mt-2 text-sm placeholder:text-sm' />
+            <input onChange={(e) => setData({ ...data, title: e.target?.value })} type="text" name="" id="" placeholder='Title' className='w-[100%] h-[2.3rem] px-3 rounded-md border border-[#444444] bg-transparent mt-2 text-sm placeholder:text-sm' />
+            <input onChange={(e) => setData({ ...data, description: e.target?.value })} type="text" name="" id="" placeholder='Description' className='w-[100%] h-[2.3rem] px-3 rounded-md border border-[#444444] bg-transparent mt-2 text-sm placeholder:text-sm' />
+            <input onChange={(e) => setData({ ...data, tags: e.target?.value })} type="text" name="" id="" placeholder='Tags / Keywords' className='w-[100%] h-[2.3rem] px-3 rounded-md border border-[#444444] bg-transparent mt-2 text-sm placeholder:text-sm' />
 
-            <button onClick={() => setinitialStep(0)} className="bg-[#FF1700] text-sm w-[100%] py-2 mt-2 rounded-md">Publish Now</button>
-            <button onClick={() => setinitialStep(0)} className="text-sm w-[100%] py-2 mt-2 rounded-md">Draft</button>
+            <button onClick={() => { handleUpload("Active") }} className="bg-[#FF1700] text-sm w-[100%] py-2 mt-2 rounded-md">Publish Now</button>
+            <button onClick={() => { handleUpload("Draft") }} className="text-sm w-[100%] py-2 mt-2 rounded-md">Draft</button>
+
+          </div>
+        </div>
+      )}
+
+
+      {/* PLAYLIST  */}
+      {showPlaylist && (
+        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className={`${theme === "dark" ? "bg-[#1A1A1B] text-gray-300" : "bg-white text-gray-700"} rounded-md shadow-lg p-6 w-full max-w-md`}>
+
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <h2 className="text-lg font-medium">Select Your Album</h2>
+                <p className='text-xs text-[#8D8D8D] mt-1'>Select an album to link the uploaded music or podcast.</p>
+              </div>
+              <button onClick={() => setinitialStep(0)} className="focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+
+            <p className='text-sm'>New Playlist</p>
+            <input onChange={(e) => setPlaylistName(e.target.value)} type="text" name="" id="" placeholder='Title' className='w-[100%] h-[2.3rem] px-3 rounded-md border border-[#444444] bg-transparent mt-2 text-sm placeholder:text-sm' />
+            <button onClick={handleCreatePlaylist} className="rounded-md border border-[#444444] bg-transparent w-[100%] h-[2.3rem] mt-2 text-sm">Create</button>
+            <p className='text-center mt-2 text-sm'>Or</p>
+            {
+              playlistData?.map((i) => (
+                <div key={i?._id} onClick={() => { setData({ ...data, playlistId: i?._id }) }} className='flex cursor-pointer justify-between items-center w-[100%] textsm text-white bg-[#262628] px-3 h-[2.5rem] border border-[#444444] mt-2 rounded-md text-sm'>
+                  <p>{i?.title}</p>
+                  {data?.playlistId == i?._id && <div style={{ background: 'linear-gradient(90deg, #E54B3C 0%, #FF1700 100%)', }} className='w-4 h-4 rounded-full flex justify-center items-center'><TiTick /></div>}
+                </div>
+              ))
+            }
+            <button onClick={() => { setinitialStep(2); setShowPlaylist(false) }} className="bg-[#FF1700] text-sm w-[100%] py-2 mt-2 rounded-md">Next</button>
 
           </div>
         </div>

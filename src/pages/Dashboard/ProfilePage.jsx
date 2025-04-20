@@ -47,7 +47,7 @@ const ProfilePage = () => {
             <div className="mt-6 grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-4">
                 <div className={containerStyle}>
                     <div>
-                        <p className="text-sm">greggedward@gmail.com</p>
+                        <p className="text-sm">{localStorage.getItem("email")}</p>
                     </div>
                     <button className="text-[#FF1700] text-sm focus:outline-none">
                         Edit

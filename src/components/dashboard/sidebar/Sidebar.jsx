@@ -8,15 +8,30 @@ import DarkModeLogo from '../../../assets/w-logo.svg'
 import { FiPlus } from "react-icons/fi";
 
 import { useTheme } from '../../../context/ThemeContext';
+import config from '../../../config';
+import axios from 'axios';
 
 const Sidebar = () => {
   const { theme } = useTheme();
   const location = useLocation().pathname.split("/")[2];
-  console.log(location)
   const { isNavOpen, toggleNav } = useSidebar();
   const sidebarRef = useRef(null);
   const nav = useNavigate()
-  // 1D1D1F
+  const [playlistData, setPlaylistData] = useState([]);
+
+
+  const fetchAllPlaylist = async () => {
+    try {
+      let playlist = await axios.get(`${config.baseUrl}/user/playlist/${localStorage.getItem("id")}`)
+      if (playlist?.data) {
+        setPlaylistData(playlist?.data?.data)
+      }
+    }
+    catch (error) {
+
+    }
+  }
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
@@ -28,6 +43,10 @@ const Sidebar = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [toggleNav]);
+
+  useEffect(() => {
+    fetchAllPlaylist()
+  }, [])
 
 
 
@@ -56,6 +75,19 @@ const Sidebar = () => {
           ))}
           <p className='text-sm text-[#8D8D8D] pl-5 mt-4 mb-4'>Playlist</p>
 
+          {
+            playlistData?.map((i) => {
+              const randomColor = "#" + Math.floor(Math.random() * 16777215).toString(16);
+
+              return (
+                <div onClick={() => nav("/dashboard/library")} key={i?._id} className={`flex items-center gap-x-3 pl-5 text-white text-sm mb-2 cursor-pointer`}>
+                  <span className="w-2.5 h-2.5 rounded-full mr-2" style={{ backgroundColor: randomColor }}></span>
+                  {i.title}
+                </div>
+              );
+            })
+          }
+          {/* 
           <div className='flex items-center gap-x-3 pl-5 text-white text-sm mb-2'>
             <div className='w-2 h-2 rounded-full bg-[#FF4500]'></div>
             <p>My Vibes</p>
@@ -67,19 +99,19 @@ const Sidebar = () => {
           <div className='flex items-center gap-x-3 pl-5 text-white text-sm mb-2'>
             <div className='w-2 h-2 rounded-full bg-[#FFDD55]'></div>
             <p>The Best</p>
-          </div>
+          </div> */}
 
-          <div className='flex items-center gap-x-3 p-2 pl-5 text-white text-sm my-5 border-t border-b border-b-[#262628] border-t-[#262628]'>
+          {/* <div className='flex items-center gap-x-3 p-2 pl-5 text-white text-sm my-5 border-t border-b border-b-[#262628] border-t-[#262628]'>
             <FiPlus />
             <p>Add New Playlist</p>
-          </div>
-
+          </div> */}
+          {/* 
           <p className='text-sm text-[#8D8D8D] pl-5 mb-2'>Others</p>
 
           <div className='flex items-center gap-x-3 pl-5 text-white text-sm mb-2'>
             <div className='w-2 h-2 rounded-full bg-[#34C759]'></div>
             <p>Favourite</p>
-          </div>
+          </div> */}
 
 
         </div>
@@ -115,31 +147,19 @@ const Sidebar = () => {
               ))}
               <p className='text-sm text-[#8D8D8D] pl-5 mt-4 mb-4'>Playlist</p>
 
-              <div className='flex items-center gap-x-3 pl-5 text-white text-sm mb-2'>
-                <div className='w-2 h-2 rounded-full bg-[#FF4500]'></div>
-                <p>My Vibes</p>
-              </div>
-              <div className='flex items-center gap-x-3 pl-5 text-white text-sm mb-2'>
-                <div className='w-2 h-2 rounded-full bg-[#3771C8]'></div>
-                <p>Late Night</p>
-              </div>
-              <div className='flex items-center gap-x-3 pl-5 text-white text-sm mb-2'>
-                <div className='w-2 h-2 rounded-full bg-[#FFDD55]'></div>
-                <p>The Best</p>
-              </div>
 
-              <div className='flex items-center gap-x-3 p-2 pl-5 text-white text-sm my-5 border-t border-b border-b-[#262628] border-t-[#262628]'>
-                <FiPlus />
-                <p>Add New Playlist</p>
-              </div>
+              {
+                playlistData?.map((i) => {
+                  const randomColor = "#" + Math.floor(Math.random() * 16777215).toString(16);
 
-              <p className='text-sm text-[#8D8D8D] pl-5 mb-2'>Others</p>
-
-              <div className='flex items-center gap-x-3 pl-5 text-white text-sm mb-2'>
-                <div className='w-2 h-2 rounded-full bg-[#34C759]'></div>
-                <p>Favourite</p>
-              </div>
-
+                  return (
+                    <div onClick={() => nav("/dashboard/library")} key={i?._id} className={`flex items-center gap-x-3 pl-5 text-white text-sm mb-2 cursor-pointer`}>
+                      <span className="w-2.5 h-2.5 rounded-full mr-2" style={{ backgroundColor: randomColor }}></span>
+                      {i.title}
+                    </div>
+                  );
+                })
+              }
 
             </div>
 
