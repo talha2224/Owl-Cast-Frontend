@@ -17,7 +17,9 @@ const CreatorDraftPage = () => {
             const fetchedData = res?.data?.data;
             setData(fetchedData?.filter((i) => i?.status == "Draft"));
             const durationsMap = {};
-            await Promise.all(fetchedData.map(async (item) => { const duration = await getAudioDuration(item.audio); durationsMap[item._id] = duration; }));
+            fetchedData.forEach(item => {
+                durationsMap[item._id] = item.duration; // no async/await
+            });
             setDurations(durationsMap);
         }
         catch (error) {

@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import axios from "axios";
 import config from '../../config'
-import { getAudioDuration } from '../../utils';
 import { FaBackward, FaForward } from 'react-icons/fa6';
 import { RxCross1, RxLoop } from 'react-icons/rx';
 import { CiPause1 } from 'react-icons/ci';
@@ -32,7 +31,9 @@ const PodcastPage = () => {
             setPodcastData(fetchedData.filter((i) => (i.type == "Podcast")))
 
             const durationsMap = {};
-            await Promise.all(fetchedData.map(async (item) => { const duration = await getAudioDuration(item.audio); durationsMap[item._id] = duration; }));
+            fetchedData.forEach(item => {
+                durationsMap[item._id] = item.duration; // no async/await
+            });
             setDurations(durationsMap);
 
         }
@@ -130,7 +131,7 @@ const PodcastPage = () => {
                     mixData.map((i, index) => (
                         <div onClick={() => { setPlayingIndex(i); if (audioRef.current) { audioRef.current.load(); audioRef.current.play(); setIsPlaying(true); } }} key={index} className="flex justify-between items-center mb-4 w-[15rem] cursor-pointer">
                             <div className="flex items-center flex-wrap">
-                                <img src={CoverImage} alt="" className="w-10 h-10 my-2" />
+                                <img src={i?.image} alt="" className="w-10 h-10 my-2" />
                                 <div className="ml-3 my-2">
                                     <p className={`${theme == "dark" ? "text-white" : "text-black"} font-medium text-sm`}>{i?.title}</p>
                                     <p className={`${theme == "dark" ? "text-white" : "text-black"} text-xs mt-1`}>{i?.creatorId?.firstName + " " + i?.creatorId?.lastName}</p>

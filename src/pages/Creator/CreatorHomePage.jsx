@@ -5,7 +5,7 @@ import { FaMusic } from "react-icons/fa6";
 import { HiDotsVertical } from 'react-icons/hi';
 import axios from 'axios';
 import config from '../../config';
-import { formatTimeAgo,getAudioDuration} from '../../utils';
+import { formatTimeAgo, getAudioDuration } from '../../utils';
 
 const CreatorHomePage = () => {
 
@@ -19,7 +19,9 @@ const CreatorHomePage = () => {
             const fetchedData = res?.data?.data;
             setData(fetchedData);
             const durationsMap = {};
-            await Promise.all(fetchedData.map(async (item) => {const duration = await getAudioDuration(item.audio);durationsMap[item._id] = duration;}));
+            fetchedData.forEach(item => {
+                durationsMap[item._id] = item.duration; // no async/await
+            }); 
             setDurations(durationsMap);
         }
         catch (error) {

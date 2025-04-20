@@ -19,7 +19,7 @@ const Sidebar = () => {
   const sidebarRef = useRef(null);
   const nav = useNavigate();
   const [initialStep, setinitialStep] = useState(0)
-  const [data, setData] = useState({ type: "music", creatorId: localStorage.getItem("id"), playlistId:null,audio: null, image: null, title: "", description: "", tags: "", })
+  const [data, setData] = useState({duration: "",type: "music", creatorId: localStorage.getItem("id"), playlistId:null,audio: null, image: null, title: "", description: "", tags: "", })
   const [playlistName, setPlaylistName] = useState("")
   const [showPlaylist, setShowPlaylist] = useState(false)
   const [playlistData, setPlaylistData] = useState([])
@@ -36,7 +36,19 @@ const Sidebar = () => {
     const file = event.target.files[0];
     if (file) {
       const previewUrl = URL.createObjectURL(file);
-      setData({ ...data, audio: file,previewUrl2:previewUrl });
+      
+      // Create a temporary Audio element to get duration
+      const audioElement = new Audio(previewUrl);
+      audioElement.addEventListener('loadedmetadata', () => {
+        const durationInSeconds = Math.floor(audioElement.duration);
+        console.log(durationInSeconds,'durationInSeconds')
+        setData(prev => ({ 
+          ...prev, 
+          audio: file, 
+          previewUrl2: previewUrl,
+          duration: durationInSeconds  // set duration here
+        }));
+      });
     }
   };
 
@@ -92,6 +104,7 @@ const Sidebar = () => {
       formData.append("description", data?.description)
       formData.append("tags", data?.tags)
       formData.append("status",status)
+      formData.append("duration", data?.duration);
       let res = await axios.post(`${config.baseUrl}/music/upload`, formData)
       if (res?.data?.data) {
         toast.dismiss(loader)

@@ -15,7 +15,7 @@ import { CiPause1 } from "react-icons/ci";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import config from '../../config'
-import { formatTimeAgo, getAudioDuration } from '../../utils';
+import { formatTimeAgo } from '../../utils';
 
 
 const SinglePage = () => {
@@ -42,7 +42,9 @@ const SinglePage = () => {
             setMusicData(fetchedData.filter((i) => (i.type !== "Podcast")))
 
             const durationsMap = {};
-            await Promise.all(fetchedData.map(async (item) => { const duration = await getAudioDuration(item.audio); durationsMap[item._id] = duration; }));
+            fetchedData.forEach(item => {
+                durationsMap[item._id] = item.duration; // no async/await
+            });
             setDurations(durationsMap);
 
         }

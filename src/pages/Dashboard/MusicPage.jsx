@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import axios from "axios";
 import config from '../../config'
-import {getAudioDuration } from '../../utils';
 import { FaBackward, FaForward } from 'react-icons/fa6';
 import { RxCross1, RxLoop } from 'react-icons/rx';
 import { CiPause1 } from 'react-icons/ci';
@@ -29,10 +28,12 @@ const MusicPage = () => {
             let res = await axios.get(`${config.baseUrl}/music/all`);
             const fetchedData = res?.data?.data;
             setMixData(fetchedData)
-            setPodcastData(fetchedData.filter((i) => (i.type == "Podcast")))
+            setPodcastData(fetchedData)
 
             const durationsMap = {};
-            await Promise.all(fetchedData.map(async (item) => { const duration = await getAudioDuration(item.audio); durationsMap[item._id] = duration; }));
+            fetchedData.forEach(item => {
+                durationsMap[item._id] = item.duration; // no async/await
+            });
             setDurations(durationsMap);
 
         }

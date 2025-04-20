@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useTheme } from '../../context/ThemeContext';
 import { HiDotsVertical } from 'react-icons/hi';
-import { formatTimeAgo,getAudioDuration} from '../../utils';
+import { formatTimeAgo, getAudioDuration } from '../../utils';
 import axios from 'axios';
 import config from '../../config';
 
@@ -17,7 +17,9 @@ const CreatorLibraryPage = () => {
             const fetchedData = res?.data?.data;
             setData(fetchedData);
             const durationsMap = {};
-            await Promise.all(fetchedData.map(async (item) => { const duration = await getAudioDuration(item.audio); durationsMap[item._id] = duration; }));
+            fetchedData.forEach(item => {
+                durationsMap[item._id] = item.duration; // no async/await
+            });
             setDurations(durationsMap);
         }
         catch (error) {
@@ -44,7 +46,7 @@ const CreatorLibraryPage = () => {
                 <p className={`${theme == "dark" && "text-white"} font-medium text-lg`}>Library</p>
                 <div className="w-[100%]">
                     {
-                       data?.map((i, index) => (
+                        data?.map((i, index) => (
                             <div key={i?._id} className={`cursor-pointer ${theme == "dark" ? "text-[#C9C9C9]" : "text-black"} flex justify-between items-center overflow-x-auto rounded-[1rem] py-2 px-3 my-3 ${theme == "dark" ? "bg-[#202022]" : "border"}`}>
                                 <div className="flex items-center md:mr-2 mr-[7rem]">
                                     <h1 className={`text-[#828287] bg-transparent font-bold lg:w-[3rem] lg:mr-0 mr-3 text-xl`}>{index + 1}</h1>

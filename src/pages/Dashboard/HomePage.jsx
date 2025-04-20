@@ -9,7 +9,7 @@ import { CiPause1 } from "react-icons/ci";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import config from '../../config'
-import { formatTimeAgo, getAudioDuration } from '../../utils';
+import { formatTimeAgo } from '../../utils';
 
 
 
@@ -34,16 +34,18 @@ const HomePage = () => {
   const fetchData = async () => {
     try {
       let res = await axios.get(`${config.baseUrl}/music/all`);
+      const fetchedData = res?.data?.data;
+      const durationsMap = {};
+      fetchedData.forEach(item => {
+        durationsMap[item._id] = item.duration; // no async/await
+      });
+      setDurations(durationsMap);
       let trending = await axios.get(`${config.baseUrl}/music/trending`);
       setTrendingData(trending.data?.data)
-      const fetchedData = res?.data?.data;
       setMixData(fetchedData)
       setPodcastData(fetchedData.filter((i) => (i.type == "Podcast")))
       setMusicData(fetchedData.filter((i) => (i.type !== "Podcast")))
 
-      const durationsMap = {};
-      await Promise.all(fetchedData.map(async (item) => { const duration = await getAudioDuration(item.audio); durationsMap[item._id] = duration; }));
-      setDurations(durationsMap);
 
     }
     catch (error) {
@@ -87,13 +89,22 @@ const HomePage = () => {
     if (!audio) return;
 
     const updateTime = () => {
-      setCurrentTime(audio.currentTime);
+      if (!isNaN(audio.currentTime)) {
+        setCurrentTime(audio.currentTime);
+      }
     };
 
     audio.addEventListener('timeupdate', updateTime);
 
+    // Also update currentTime when the metadata (duration, etc.) is loaded
+    const handleLoadedMetadata = () => {
+      setCurrentTime(audio.currentTime);
+    };
+    audio.addEventListener('loadedmetadata', handleLoadedMetadata);
+
     return () => {
       audio.removeEventListener('timeupdate', updateTime);
+      audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
     };
   }, [playingIndex]);
 
@@ -124,7 +135,7 @@ const HomePage = () => {
 
               <div className="w-[100%] overflow-x-auto mt-4 flex items-center gap-x-4">
                 {
-                  podcastData?.map((i) => (<img onClick={() => {setPlayingIndex(i);if (audioRef.current) {audioRef.current.load();audioRef.current.play();setIsPlaying(true);}}} key={i?.id} src={i?.image} className="w-[7rem] h-[7rem] rounded-md cursor-pointer" />))
+                  podcastData?.map((i) => (<img onClick={() => { setPlayingIndex(i); if (audioRef.current) { audioRef.current.load(); audioRef.current.currentTime = 0; audioRef.current.play(); setIsPlaying(true); } }} key={i?.id} src={i?.image} className="w-[7rem] h-[7rem] rounded-md cursor-pointer" />))
                 }
               </div>
             </div>
@@ -134,7 +145,7 @@ const HomePage = () => {
               <div className="w-[100%]">
                 {
                   musicData?.map((i, index) => (
-                    <div onClick={() => {setPlayingIndex(i);if (audioRef.current) {audioRef.current.load();audioRef.current.play();setIsPlaying(true);}}} key={i?._id} className={`cursor-pointer ${theme == "dark" ? "text-[#C9C9C9]" : "text-black"} flex justify-between items-center flex-wrap rounded-[1rem] py-2 px-3 my-3 ${theme == "dark" ? playingIndex === i ? "bg-[#FF1700]" : "bg-[#202022]" : "border"}`}>
+                    <div onClick={() => { setPlayingIndex(i); if (audioRef.current) { audioRef.current.load(); audioRef.current.currentTime = 0; audioRef.current.play(); setIsPlaying(true); } }} key={i?._id} className={`cursor-pointer ${theme == "dark" ? "text-[#C9C9C9]" : "text-black"} flex justify-between items-center flex-wrap rounded-[1rem] py-2 px-3 my-3 ${theme == "dark" ? playingIndex === i ? "bg-[#FF1700]" : "bg-[#202022]" : "border"}`}>
                       <div className="flex items-center flex-wrap">
                         <h1 className={`text-[#828287] bg-transparent font-bold lg:w-[3rem] lg:mr-0 mr-3 text-xl`}>{index + 1}</h1>
                         <img src={i?.image} alt="" className='mr-2 rounded-lg w-[3rem] h-[3rem]' />
@@ -180,7 +191,7 @@ const HomePage = () => {
             <div className={`mt-6 px-5 border-b ${theme == "dark" && "border-b-[#262628]"}`}>
               {
                 musicData.map((i, index) => (
-                  <div onClick={() => {setPlayingIndex(i);if (audioRef.current) {audioRef.current.load();audioRef.current.play();setIsPlaying(true);}}} key={index} className="flex justify-between items-center mb-4 cursor-pointer">
+                  <div onClick={() => { setPlayingIndex(i); if (audioRef.current) { audioRef.current.load(); audioRef.current.currentTime = 0; audioRef.current.play(); setIsPlaying(true); } }} key={index} className="flex justify-between items-center mb-4 cursor-pointer">
                     <div className="flex items-center flex-wrap">
                       <img src={i?.image} alt="" className="w-10 h-10 rounded-md" />
                       <div className="ml-3">
@@ -199,7 +210,7 @@ const HomePage = () => {
               <p className={`${theme == "dark" && "text-white"} font-medium text-lg`}>Trending 🔥</p>
               <p className="text-[#828287]">Recent</p>
             </div>
-            <div className="flex justify-center items-center mt-3 mx-5"><img onClick={() => {setPlayingIndex(trendingData);if (audioRef.current) {audioRef.current.load();audioRef.current.play();setIsPlaying(true);}}} src={trendingData?.image} alt="" className="w-[20rem] h-[15rem] rounded-md cursor-pointer" /></div>
+            <div className="flex justify-center items-center mt-3 mx-5"><img onClick={() => { setPlayingIndex(trendingData); if (audioRef.current) { audioRef.current.load(); audioRef.current.play(); setIsPlaying(true); } }} src={trendingData?.image} alt="" className="w-[20rem] h-[15rem] rounded-md cursor-pointer" /></div>
 
           </div>
         )
@@ -218,7 +229,7 @@ const HomePage = () => {
             <div className="mt-10 flex gap-x-5 items-center flex-wrap">
               {
                 podcastData?.map((i) => (
-                  <div onClick={() => {setPlayingIndex(i);if (audioRef.current) {audioRef.current.load();audioRef.current.play();setIsPlaying(true);}}} key={i?._id} className="mb-5 flex-1 min-w-[15rem] max-w-[15rem] cursor-pointer">
+                  <div onClick={() => { setPlayingIndex(i); if (audioRef.current) { audioRef.current.load(); audioRef.current.currentTime = 0; audioRef.current.play(); setIsPlaying(true); } }} key={i?._id} className="mb-5 flex-1 min-w-[15rem] max-w-[15rem] cursor-pointer">
                     <img src={i?.image} alt="" className="w-[13rem] h-[13rem] rounded-md" />
                     <p className="mt-2 text-white">{i?.title}</p>
                     <p className="mt-1 text-[#828287]">{i?.creatorId?.firstName + " " + i?.creatorId?.lastName}</p>
@@ -244,7 +255,7 @@ const HomePage = () => {
             <div className="mt-10 flex gap-x-5 items-center flex-wrap">
               {
                 mixData?.map((i) => (
-                  <div onClick={() => {setPlayingIndex(i);if (audioRef.current) {audioRef.current.load();audioRef.current.play();setIsPlaying(true);}}} key={i?._id} className="mb-5 flex-1 sm:min-w-[15rem] sm:max-w-[15rem] cursor-pointer">
+                  <div onClick={() => { setPlayingIndex(i); if (audioRef.current) { audioRef.current.load(); audioRef.current.currentTime = 0; audioRef.current.play(); setIsPlaying(true); } }} key={i?._id} className="mb-5 flex-1 sm:min-w-[15rem] sm:max-w-[15rem] cursor-pointer">
                     <img src={i?.image} alt="" className="w-[13rem] h-[13rem] rounded-md" />
                     <p className="mt-2 text-white">{i?.title}</p>
                     <p className="mt-1 text-[#828287]">{i?.creatorId?.firstName + " " + i?.creatorId?.lastName}</p>
@@ -276,7 +287,7 @@ const HomePage = () => {
               </div>
               <div className="flex items-center gap-x-4">
                 <AiOutlineExpandAlt onClick={() => { setExpandView(!expandView) }} className={`${theme == "dark" && "text-white"} cursor-pointer text-lg`} />
-                <RxCross1  onClick={() => {setPlayingIndex(0);if (audioRef.current) {audioRef.current.pause();audioRef.current.currentTime = 0;}}}  className={`${theme == "dark" && "text-white"} cursor-pointer text-lg`} />
+                <RxCross1 onClick={() => { setPlayingIndex(0); if (audioRef.current) { audioRef.current.pause(); audioRef.current.currentTime = 0; } }} className={`${theme == "dark" && "text-white"} cursor-pointer text-lg`} />
               </div>
             </div>
             <div className="flex justify-between items-center gap-5 mt-7 text-white">
@@ -285,7 +296,7 @@ const HomePage = () => {
 
               {/* Progress Bar */}
               <div className="flex-1 bg-[#444444] h-[5px] rounded-full relative overflow-hidden">
-                <div className="h-[5px] bg-[#FF1700] rounded-full absolute top-0 left-0"style={{ width: `${(currentTime / durations[playingIndex._id]) * 100}%` }}/>
+                <div className="h-[5px] bg-[#FF1700] rounded-full absolute top-0 left-0" style={{ width: `${(currentTime / durations[playingIndex._id]) * 100}%` }} />
               </div>
 
               {/* Remaining Time */}
@@ -296,7 +307,7 @@ const HomePage = () => {
               <RxLoop className="text-white" />
               <FaBackward className="text-white cursor-pointer" onClick={handleBackward} />
               {
-                isPlaying ?<CiPause1 className="text-white text-xl cursor-pointer" onClick={handlePlayPause} /> :<FaPlay className="text-white text-xl cursor-pointer" onClick={handlePlayPause} />
+                isPlaying ? <CiPause1 className="text-white text-xl cursor-pointer" onClick={handlePlayPause} /> : <FaPlay className="text-white text-xl cursor-pointer" onClick={handlePlayPause} />
               }
               <FaForward className="text-white cursor-pointer" onClick={handleForward} />
               <RxLoop className="text-white" />
