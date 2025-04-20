@@ -5,7 +5,7 @@
 // }
 const config = {
     baseUrl:"https://owl-cast-backend.vercel.app/api/v1",
-    baseUrl2:"https://owl-cast-backend.vercel.app/",
+    baseUrl2:"https://owl-cast-backend.vercel.app",
 }
 
 export default config
