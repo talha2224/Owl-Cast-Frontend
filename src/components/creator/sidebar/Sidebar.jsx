@@ -178,13 +178,13 @@ const Sidebar = () => {
             <p>New Upload</p>
           </div>
 
-          <div className='w-[100%] bg-[#262628] p-3'>
+          {/* <div className='w-[100%] bg-[#262628] p-3'>
             <p className='text-white text-sm'>Storage Used</p>
             <div className='flex items-center justify-between mt-3 text-white'>
               <p className='text-sm text-[#808080]'>15GB/<span className='text-white'>50GB</span></p>
               <p className='text-xs text-[#E54B3C]'>Upgrade</p>
             </div>
-          </div>
+          </div> */}
 
         </div>
 
@@ -232,13 +232,13 @@ const Sidebar = () => {
                 <p>New Upload</p>
               </div>
 
-              <div className='w-[100%] bg-[#262628] p-3'>
+              {/* <div className='w-[100%] bg-[#262628] p-3'>
                 <p className='text-white text-sm'>Storage Used</p>
                 <div className='flex items-center justify-between mt-3 text-white'>
                   <p className='text-sm text-[#808080]'>15GB/<span className='text-white'>50GB</span></p>
                   <p className='text-xs text-[#E54B3C]'>Upgrade</p>
                 </div>
-              </div>
+              </div> */}
 
             </div>
 

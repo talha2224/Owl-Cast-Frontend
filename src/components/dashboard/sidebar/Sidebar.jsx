@@ -10,12 +10,16 @@ import { FiPlus } from "react-icons/fi";
 import { useTheme } from '../../../context/ThemeContext';
 import config from '../../../config';
 import axios from 'axios';
+import { loadStripe } from "@stripe/stripe-js";
+import toast from 'react-hot-toast';
+loadStripe("pk_test_51OjJpTASyMRcymO6x2PBK1nrHChycNMNXj7HHvTRffOp5xufCj3WRSCLoep1tGp5Ilx3IWj7ck5yqrwEH8VSRKn80055Kvyelu");
 
 const Sidebar = () => {
   const { theme } = useTheme();
   const location = useLocation().pathname.split("/")[2];
   const { isNavOpen, toggleNav } = useSidebar();
   const sidebarRef = useRef(null);
+  const [showUpgrade, setshowUpgrade] = useState(false)
   const nav = useNavigate()
   const [playlistData, setPlaylistData] = useState([]);
 
@@ -47,6 +51,21 @@ const Sidebar = () => {
   useEffect(() => {
     fetchAllPlaylist()
   }, [])
+
+
+  const handleSendMoney = async (amount) => {
+    let loader = toast.loading("Processing Request")
+    try {
+      let stripeRes = await axios.post(`${config.baseUrl2}/create-checkout-session`, { amount})
+      toast.dismiss(loader)
+      window.location.href = stripeRes.data?.url;
+      localStorage.setItem("paid","paid")
+    }
+    catch (error) {
+      toast.dismiss(loader)
+      console.log(error)
+    }
+  }
 
 
 
@@ -87,31 +106,19 @@ const Sidebar = () => {
               );
             })
           }
-          {/* 
-          <div className='flex items-center gap-x-3 pl-5 text-white text-sm mb-2'>
-            <div className='w-2 h-2 rounded-full bg-[#FF4500]'></div>
-            <p>My Vibes</p>
-          </div>
-          <div className='flex items-center gap-x-3 pl-5 text-white text-sm mb-2'>
-            <div className='w-2 h-2 rounded-full bg-[#3771C8]'></div>
-            <p>Late Night</p>
-          </div>
-          <div className='flex items-center gap-x-3 pl-5 text-white text-sm mb-2'>
-            <div className='w-2 h-2 rounded-full bg-[#FFDD55]'></div>
-            <p>The Best</p>
-          </div> */}
 
-          {/* <div className='flex items-center gap-x-3 p-2 pl-5 text-white text-sm my-5 border-t border-b border-b-[#262628] border-t-[#262628]'>
-            <FiPlus />
-            <p>Add New Playlist</p>
-          </div> */}
-          {/* 
-          <p className='text-sm text-[#8D8D8D] pl-5 mb-2'>Others</p>
 
-          <div className='flex items-center gap-x-3 pl-5 text-white text-sm mb-2'>
-            <div className='w-2 h-2 rounded-full bg-[#34C759]'></div>
-            <p>Favourite</p>
-          </div> */}
+          {/* { */}
+            {/* // !localStorage.getItem("paid") && ( */}
+              <div onClick={() => setshowUpgrade(true)} className='w-[100%] bg-[#262628] p-3 mt-3 cursor-pointer'>
+                <div className='flex items-center justify-between  text-white'>
+                  <p className='text-sm text-[#808080]'>For Downloading</p>
+                  <p className='text-xs text-[#E54B3C]'>Upgrade</p>
+                </div>
+              </div>
+
+            {/* ) */}
+          {/* } */}
 
 
         </div>
@@ -124,6 +131,8 @@ const Sidebar = () => {
         </div>
 
       </div>
+
+
 
       {/* Mobile Sidebar */}
       {
@@ -171,7 +180,63 @@ const Sidebar = () => {
             </div>
 
           </div>
-        )}
+        )
+      }
+
+      {showUpgrade && (
+        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className={`${theme === "dark" ? "bg-[#1A1A1B] text-gray-300" : "bg-white text-gray-700"} rounded-md shadow-lg p-6 w-full max-w-md`}>
+
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <h2 className="text-lg font-medium">Upgrade Your Plan</h2>
+              </div>
+              <button onClick={() => setshowUpgrade(false)} className="focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {/* Student Plan */}
+              <div onClick={()=>handleSendMoney(5.99)} className="border border-[#8D8D8D] p-4 rounded-md hover:shadow-md cursor-pointer">
+                <h3 className="text-lg font-bold mb-2">Student - $5.99/mo</h3>
+                <ul className="list-disc list-inside text-sm text-gray-400">
+                  <li>Ad-free listening</li>
+                  <li>Offline downloads</li>
+                  <li>Special student discounts</li>
+                </ul>
+              </div>
+
+              {/* Individual Plan */}
+              <div onClick={()=>handleSendMoney(10.99)} className="border border-[#8D8D8D]r p-4 rounded-md hover:shadow-md cursor-pointer">
+                <h3 className="text-lg font-bold mb-2">Individual - $10.99/mo</h3>
+                <ul className="list-disc list-inside text-sm text-gray-400">
+                  <li>Ad-free listening</li>
+                  <li>Unlimited skips</li>
+                  <li>High-quality audio</li>
+                </ul>
+              </div>
+
+              {/* Family Plan */}
+              <div onClick={()=>handleSendMoney(16.99)} className="border border-[#8D8D8D] p-4 rounded-md hover:shadow-md cursor-pointer">
+                <h3 className="text-lg font-bold mb-2">Family - $16.99/mo</h3>
+                <ul className="list-disc list-inside text-sm text-gray-400">
+                  <li>6 accounts included</li>
+                  <li>Ad-free listening</li>
+                  <li>Parental controls</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Close Button */}
+            {/* <button onClick={() => setshowUpgrade(false)} className="px-4 py-2 bg-[#FF1700] text-white rounded hover:bg-[#e01300] transition ">Close</button> */}
+
+          </div>
+        </div>
+      )}
+
     </>
   );
 };

@@ -54,12 +54,12 @@ export const adminNav = [
         name: "Analytics",
         icon: <SiGoogleanalytics />
     },
-    {
-        id: 41,
-        link: "monetization",
-        name: "Monetization",
-        icon: <MdMonetizationOn/>
-    }
+    // {
+    //     id: 41,
+    //     link: "monetization",
+    //     name: "Monetization",
+    //     icon: <MdMonetizationOn/>
+    // }
 ]
 
 export const superAdminNav = [

@@ -1,62 +1,20 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTheme } from '../../context/ThemeContext';
 import { BsBarChartFill, BsThreeDotsVertical } from 'react-icons/bs';
 import { FaStopwatch, FaUsers } from 'react-icons/fa6';
 import { AiFillDollarCircle } from 'react-icons/ai';
 import Chart from 'react-apexcharts';
+import axios from 'axios';
+import config from '../../config';
 
 const generateRandomData = (count) => {
     return Array.from({ length: count }, () => Math.floor(Math.random() * 1500));
 };
-const tableData = [
-    { title: 'Atomic Habits Summary', streams: 12443, completionRate: 78, earnings: 42.50 },
-    { title: 'Deep Focus Piano Mix', streams: 8921, completionRate: 82, earnings: 31.20 },
-    { title: 'You\'re the best', streams: 8009, completionRate: 44, earnings: 114.00 },
-    { title: 'Am In Love', streams: 7233, completionRate: 49, earnings: 28.00 },
-];
 
 const CreatorAnalyticsPage = () => {
     const { theme } = useTheme();
     const cardStyle = `${theme == "dark" ? "bg-[#262628]" : "border"} p-3 max-w-[20rem] min-w-[20rem] rounded-lg flex items-center gap-x-4`
 
-    const chartData = {
-        series: [{ name: 'Streams', data: [generateRandomData(1)[0], generateRandomData(1)[0] * 0.7, 1243, generateRandomData(1)[0] * 0.3, generateRandomData(1)[0] * 0.8,], },],
-        options: {
-            chart: {
-                type: 'bar',
-                height: 250,
-                toolbar: { show: false, },
-                background: 'transparent',
-                foreColor: theme === 'dark' ? '#f1f1f1' : '#374151',
-                animations: { enabled: false, },
-                events: {
-                    mouseMove: (event, chartContext, config) => {
-                        if (config.dataPointIndex !== undefined) {
-                            const date = ['Mar 3', 'Mar 4', 'Mar 30', 'Apr 5', 'Apr 12'][config.dataPointIndex];
-                            const streams = chartData.series[0].data[config.dataPointIndex];
-                            const tooltip = document.querySelector('.apexcharts-tooltip');
-                            if (tooltip) { tooltip.innerHTML = `<div class="bg-[#262628] text-white rounded py-2 px-3 text-xs shadow-md"> <p class="font-semibold">${date}</p> <p>${streams} streams</p></div>`; }
-                        }
-                    },
-                },
-            },
-            plotOptions: { bar: { columnWidth: '60%', borderRadius: 4, }, },
-            dataLabels: { enabled: false, },
-            xaxis: { categories: ['Mar 3', 'Mar 4', 'Mar 30', 'Apr 5', 'Apr 12'], axisBorder: { show: false, }, axisTicks: { show: false, }, labels: { style: { colors: theme === 'dark' ? '#a1a1aa' : '#4b5563', }, }, },
-            yaxis: { show: false, labels: { show: false, }, axisBorder: { show: false, }, axisTicks: { show: false, }, },
-            grid: { show: false, },
-            colors: ['#1AFF79'],
-            tooltip: {
-                enabled: true,
-                custom: function ({ series, seriesIndex, dataPointIndex, w }) {
-                    const date = w.config.xaxis.categories[dataPointIndex];
-                    const streams = series[seriesIndex][dataPointIndex];
-                    return `<div class="bg-[#262628] text-white rounded py-2 px-3 text-xs shadow-md"><p class="font-semibold">${date}</p><p>${streams} streams</p></div>`;
-                },
-                style: { fontSize: '10px', }, fixed: { enabled: false, }, x: { show: false, }, y: { formatter: (val) => `${val} streams`, }, marker: { show: false, },
-            },
-        },
-    };
     const areaChartData = {
         series: [
             {
@@ -210,6 +168,195 @@ const CreatorAnalyticsPage = () => {
         },
     };
 
+    const [data, setData] = useState([])
+    const [durations, setDurations] = useState({});
+    const fetchData = async () => {
+        try {
+            const res = await axios.get(`${config.baseUrl}/music/creator/${localStorage.getItem("id")}`);
+            const fetchedData = res?.data?.data;
+            // processChartData(fetchedData)
+            setData(fetchedData);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+    const count = () => {
+        return data?.reduce((a, c) => {
+            return a + (c?.listeners?.length || 0);
+        }, 0);
+    };
+
+    useEffect(() => {
+        fetchData()
+    }, []);
+
+
+    const processChartData = (data) => {
+        // Create a map to store the count of items for each date
+        const dateCounts = {};
+
+        // Iterate through your data and count items by their creation date
+        data.forEach(item => {
+            const createdAtDate = new Date(item.createdAt).toLocaleDateString(); // Extract date part
+            dateCounts[createdAtDate] = (dateCounts[createdAtDate] || 0) + 1;
+        });
+
+        // Sort the dates for the xaxis and prepare the series data
+        const sortedDates = Object.keys(dateCounts).sort((a, b) => new Date(a) - new Date(b));
+        const seriesData = sortedDates.map(date => dateCounts[date]);
+
+        return {
+            series: [{
+                name: 'Content Created',
+                data: seriesData,
+            }],
+            options: {
+                chart: {
+                    type: 'bar',
+                    height: 250,
+                    toolbar: { show: false },
+                    background: 'transparent',
+                    foreColor: theme === 'dark' ? '#f1f1f1' : '#374151',
+                    animations: { enabled: false },
+                    events: {
+                        mouseMove: (event, chartContext, config) => {
+                            if (config.dataPointIndex !== undefined) {
+                                const date = sortedDates[config.dataPointIndex];
+                                const count = chartData.series[0].data[config.dataPointIndex];
+                                const tooltip = document.querySelector('.apexcharts-tooltip');
+                                if (tooltip) {
+                                    tooltip.innerHTML = `<div class="bg-[#262628] text-white rounded py-2 px-3 text-xs shadow-md"> <p class="font-semibold">${date}</p> <p>${count} item(s) created</p></div>`;
+                                }
+                            }
+                        },
+                    },
+                },
+                plotOptions: {
+                    bar: {
+                        columnWidth: '60%',
+                        borderRadius: 4,
+                    },
+                },
+                dataLabels: { enabled: false },
+                xaxis: {
+                    categories: sortedDates,
+                    axisBorder: { show: false },
+                    axisTicks: { show: false },
+                    labels: {
+                        style: {
+                            colors: theme === 'dark' ? '#a1a1aa' : '#4b5563',
+                        },
+                    },
+                },
+                yaxis: {
+                    show: false,
+                    labels: { show: false },
+                    axisBorder: { show: false },
+                    axisTicks: { show: false },
+                },
+                grid: { show: false },
+                colors: ['#1AFF79'],
+                tooltip: {
+                    enabled: true,
+                    custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+                        const date = w.config.xaxis.categories[dataPointIndex];
+                        const count = series[seriesIndex][dataPointIndex];
+                        return `<div class="bg-[#262628] text-white rounded py-2 px-3 text-xs shadow-md"><p class="font-semibold">${date}</p><p>${count} item(s) created</p></div>`;
+                    },
+                    style: { fontSize: '10px' },
+                    fixed: { enabled: false },
+                    x: { show: false },
+                    y: {
+                        formatter: (val) => `${val} item(s) created`,
+                    },
+                    marker: { show: false },
+                },
+            },
+        };
+    };
+
+    const processCountryChartData = (data) => {
+        const countryCounts = {};
+
+        data.forEach(item => {
+            if (item.listeners && Array.isArray(item.listeners)) {
+                item.listeners.forEach(listener => {
+                    if (listener.country) {
+                        countryCounts[listener.country] = (countryCounts[listener.country] || 0) + 1;
+                    }
+                });
+            }
+        });
+
+        // Sort countries by listener count in descending order
+        const sortedCountries = Object.entries(countryCounts)
+            .sort(([, countA], [, countB]) => countB - countA)
+            .slice(0, 5); // Get the top 5 countries
+
+        const countries = sortedCountries.map(([country]) => country);
+        const listenerCounts = sortedCountries.map(([, count]) => count);
+
+        return {
+            series: [{
+                name: 'Listeners',
+                data: listenerCounts,
+            }],
+            options: {
+                chart: {
+                    type: 'bar', // Changed to bar chart for better readability of countries
+                    height: 350, // Adjust height as needed
+                    toolbar: { show: false },
+                    background: 'transparent',
+                    foreColor: theme === 'dark' ? '#f1f1f1' : '#374151',
+                    animations: { enabled: false },
+                },
+                plotOptions: {
+                    bar: {
+                        columnWidth: '60%',
+                        borderRadius: 4,
+                    },
+                },
+                dataLabels: {
+                    enabled: true,
+                    style: {
+                        colors: [theme === 'dark' ? '#f1f1f1' : '#374151'],
+                    },
+                },
+                xaxis: {
+                    categories: countries,
+                    axisBorder: { show: false },
+                    axisTicks: { show: false },
+                    labels: {
+                        style: {
+                            colors: theme === 'dark' ? '#a1a1aa' : '#4b5563',
+                        },
+                    },
+                },
+                yaxis: {
+                    show: false,
+                    axisBorder: { show: false },
+                    axisTicks: { show: false },
+                    labels: { show: false },
+                },
+                grid: { show: false },
+                colors: ['#A056D7'], // Use one of the colors from your original area chart
+                tooltip: {
+                    enabled: true,
+                    y: {
+                        formatter: (val) => `${val} listeners`,
+                    },
+                },
+            },
+        };
+    };
+
+    const processedCountryChartData = processCountryChartData(data);
+
+    const processedChartData = processChartData(data);
+
+
+
+
     return (
         <div className='flex-1 overflow-x-auto mx-5 mt-8'>
 
@@ -220,7 +367,7 @@ const CreatorAnalyticsPage = () => {
                     <BsBarChartFill className='text-[2rem] text-[#FF543E]' />
                     <div>
                         <p className={`${theme == "dark" && "text-white"} text-sm`}>Total Streams</p>
-                        <p className='text-[#FF543E]'>+12% vs - last month</p>
+                        <p className='text-[#FF543E]'>{count()}</p>
                     </div>
                 </div>
 
@@ -228,7 +375,7 @@ const CreatorAnalyticsPage = () => {
                     <FaUsers className='text-[2rem] text-[#FFDD55]' />
                     <div>
                         <p className={`${theme == "dark" && "text-white"} text-sm`}>Total Listeners</p>
-                        <p className='text-[#FFDD55]'>8.3M Monthly</p>
+                        <p className='text-[#FFDD55]'>{count()}</p>
                     </div>
                 </div>
 
@@ -236,7 +383,7 @@ const CreatorAnalyticsPage = () => {
                     <AiFillDollarCircle className='text-[2rem] text-[#34C759]' />
                     <div>
                         <p className={`${theme == "dark" && "text-white"} text-sm`}>Total Earnings</p>
-                        <p className='text-[#34C759]'>$30,249.99</p>
+                        <p className='text-[#34C759]'>{count() * 0.001}</p>
                     </div>
                 </div>
 
@@ -244,7 +391,7 @@ const CreatorAnalyticsPage = () => {
                     <FaStopwatch className='text-[2rem] text-[#0090FF]' />
                     <div>
                         <p className={`${theme == "dark" && "text-white"} text-sm`}>Avg. Listening Duration</p>
-                        <p className='text-[#0090FF]'>22 mins per session</p>
+                        <p className='text-[#0090FF]'>3 mins per session</p>
                     </div>
                 </div>
 
@@ -258,17 +405,15 @@ const CreatorAnalyticsPage = () => {
                         <p className={`${theme == "dark" && "text-white"}`}>Stream Over Time</p>
                         <button className={`${theme == "dark" ? "bg-[#262628] text-white" : "border"} px-4 py-1 text-xs rounded-full`}>7 days</button>
                     </div>
-
+                    {/* REAL DATA HERE  */}
                     <div className="mt-0">
-                        <Chart options={chartData.options} series={chartData.series} type="bar" height={180} />
+                        <Chart options={processedChartData.options} series={processedChartData.series} type="bar" height={180} />
                     </div>
 
                 </div>
 
                 <div className={`${theme === 'dark' ? 'bg-[#1D1D1F]' : 'border'} p-4 flex-1 rounded-lg`}>
-                    <h3 className={`${theme === 'dark' ? 'text-white' : 'text-gray-800'} mb-4 font-semibold`}>
-                        Content Performance
-                    </h3>
+                    <h3 className={`${theme === 'dark' ? 'text-white' : 'text-gray-800'} mb-4 font-semibold`}>Content Performance</h3>
                     <div className="overflow-x-auto">
                         <table className="w-full">
                             <thead className="text-left text-xs text-gray-500">
@@ -281,12 +426,12 @@ const CreatorAnalyticsPage = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {tableData.map((item, index) => (
+                                {data.map((item, index) => (
                                     <tr key={index}>
                                         <td className={`${theme === 'dark' ? 'text-white' : 'text-gray-800'} py-2 pr-4 text-sm`}>{item.title}</td>
-                                        <td className={`${theme === 'dark' ? 'text-white' : 'text-gray-800'} py-2 pr-4 text-sm`}>{item.streams.toLocaleString()}</td>
-                                        <td className={`${theme === 'dark' ? 'text-white' : 'text-gray-800'} py-2 pr-4 text-sm`}>{item.completionRate}%</td>
-                                        <td className={`${theme === 'dark' ? 'text-white' : 'text-gray-800'} py-2 pr-4 text-sm`}>${item.earnings.toFixed(2)}</td>
+                                        <td className={`${theme === 'dark' ? 'text-white' : 'text-gray-800'} py-2 pr-4 text-sm`}>{item.listeners?.length.toLocaleString()}</td>
+                                        <td className={`${theme === 'dark' ? 'text-white' : 'text-gray-800'} py-2 pr-4 text-sm`}>  {Math.floor(Math.random() * (95 - 50 + 1)) + 50}%</td>
+                                        <td className={`${theme === 'dark' ? 'text-white' : 'text-gray-800'} py-2 pr-4 text-sm`}>${(item.listeners?.length * 0.001)}</td>
                                         <td className="py-2 text-gray-500">
                                             <BsThreeDotsVertical />
                                         </td>
@@ -303,14 +448,15 @@ const CreatorAnalyticsPage = () => {
             <div className='flex items-start gap-x-10 flex-wrap mt-10'>
 
                 <div className={`${theme == "dark" ? "bg-[#1D1D1F]" : "border"} p-4 sm:w-[25rem] w-[100%] rounded-lg`}>
-
                     <p className={`${theme == "dark" && "text-white"}`}>Top countries</p>
-
-                    <div className="mt-[-16rem]">
-                        <Chart options={areaChartData.options} series={areaChartData.series} type="area" height={450} />
+                    {/* REAL DATA HERE */}
+                    <div className="mt-4"> {/* Adjust margin as needed */}
+                        <Chart options={processedCountryChartData.options} series={processedCountryChartData.series} type="bar" height={180} />
                     </div>
-
                 </div>
+
+
+                {/*NO NEED OF REAL DATA HERE  */}
 
                 <div className={`${theme === 'dark' ? 'bg-[#1D1D1F]' : 'border'} p-4 flex-1 rounded-lg flex flex-col`}>
                     <p className={`${theme === 'dark' && 'text-white'} font-semibold mb-4`}>Device Split</p>

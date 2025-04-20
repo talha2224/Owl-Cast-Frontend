@@ -53,6 +53,27 @@ const HomePage = () => {
     }
   };
 
+  const updateListners = async (i) => {
+    try {
+      setPlayingIndex(i); 
+      if (audioRef.current) { 
+        audioRef.current.load(); 
+        audioRef.current.currentTime = 0; 
+        audioRef.current.play(); 
+        setIsPlaying(true);
+      }
+      if(!i?.listeners?.includes(localStorage.getItem("id"))){
+        let res = await axios.put(`${config.baseUrl}/music/listener/${i?._id}`,{userId:localStorage.getItem("id")});
+        console.log(res?.data?.data)
+      }
+
+
+    }
+    catch (error) {
+      console.log(error)
+    }
+  };
+
 
   const formatDuration = (seconds) => {
     if (!seconds) return "00:00";
@@ -135,7 +156,7 @@ const HomePage = () => {
 
               <div className="w-[100%] overflow-x-auto mt-4 flex items-center gap-x-4">
                 {
-                  podcastData?.map((i) => (<img onClick={() => { setPlayingIndex(i); if (audioRef.current) { audioRef.current.load(); audioRef.current.currentTime = 0; audioRef.current.play(); setIsPlaying(true); } }} key={i?.id} src={i?.image} className="w-[7rem] h-[7rem] rounded-md cursor-pointer" />))
+                  podcastData?.map((i) => (<img onClick={() => { updateListners(i) }} key={i?.id} src={i?.image} className="w-[7rem] h-[7rem] rounded-md cursor-pointer" />))
                 }
               </div>
             </div>
@@ -145,7 +166,7 @@ const HomePage = () => {
               <div className="w-[100%]">
                 {
                   musicData?.map((i, index) => (
-                    <div onClick={() => { setPlayingIndex(i); if (audioRef.current) { audioRef.current.load(); audioRef.current.currentTime = 0; audioRef.current.play(); setIsPlaying(true); } }} key={i?._id} className={`cursor-pointer ${theme == "dark" ? "text-[#C9C9C9]" : "text-black"} flex justify-between items-center flex-wrap rounded-[1rem] py-2 px-3 my-3 ${theme == "dark" ? playingIndex === i ? "bg-[#FF1700]" : "bg-[#202022]" : "border"}`}>
+                    <div onClick={() => { updateListners(i) }} key={i?._id} className={`cursor-pointer ${theme == "dark" ? "text-[#C9C9C9]" : "text-black"} flex justify-between items-center flex-wrap rounded-[1rem] py-2 px-3 my-3 ${theme == "dark" ? playingIndex === i ? "bg-[#FF1700]" : "bg-[#202022]" : "border"}`}>
                       <div className="flex items-center flex-wrap">
                         <h1 className={`text-[#828287] bg-transparent font-bold lg:w-[3rem] lg:mr-0 mr-3 text-xl`}>{index + 1}</h1>
                         <img src={i?.image} alt="" className='mr-2 rounded-lg w-[3rem] h-[3rem]' />
@@ -191,7 +212,7 @@ const HomePage = () => {
             <div className={`mt-6 px-5 border-b ${theme == "dark" && "border-b-[#262628]"}`}>
               {
                 musicData.map((i, index) => (
-                  <div onClick={() => { setPlayingIndex(i); if (audioRef.current) { audioRef.current.load(); audioRef.current.currentTime = 0; audioRef.current.play(); setIsPlaying(true); } }} key={index} className="flex justify-between items-center mb-4 cursor-pointer">
+                  <div onClick={() => { updateListners(i) }} key={index} className="flex justify-between items-center mb-4 cursor-pointer">
                     <div className="flex items-center flex-wrap">
                       <img src={i?.image} alt="" className="w-10 h-10 rounded-md" />
                       <div className="ml-3">
@@ -229,7 +250,7 @@ const HomePage = () => {
             <div className="mt-10 flex gap-x-5 items-center flex-wrap">
               {
                 podcastData?.map((i) => (
-                  <div onClick={() => { setPlayingIndex(i); if (audioRef.current) { audioRef.current.load(); audioRef.current.currentTime = 0; audioRef.current.play(); setIsPlaying(true); } }} key={i?._id} className="mb-5 flex-1 min-w-[15rem] max-w-[15rem] cursor-pointer">
+                  <div onClick={() => { updateListners(i) }} key={i?._id} className="mb-5 flex-1 min-w-[15rem] max-w-[15rem] cursor-pointer">
                     <img src={i?.image} alt="" className="w-[13rem] h-[13rem] rounded-md" />
                     <p className="mt-2 text-white">{i?.title}</p>
                     <p className="mt-1 text-[#828287]">{i?.creatorId?.firstName + " " + i?.creatorId?.lastName}</p>
@@ -255,7 +276,7 @@ const HomePage = () => {
             <div className="mt-10 flex gap-x-5 items-center flex-wrap">
               {
                 mixData?.map((i) => (
-                  <div onClick={() => { setPlayingIndex(i); if (audioRef.current) { audioRef.current.load(); audioRef.current.currentTime = 0; audioRef.current.play(); setIsPlaying(true); } }} key={i?._id} className="mb-5 flex-1 sm:min-w-[15rem] sm:max-w-[15rem] cursor-pointer">
+                  <div onClick={() => { updateListners(i) }} key={i?._id} className="mb-5 flex-1 sm:min-w-[15rem] sm:max-w-[15rem] cursor-pointer">
                     <img src={i?.image} alt="" className="w-[13rem] h-[13rem] rounded-md" />
                     <p className="mt-2 text-white">{i?.title}</p>
                     <p className="mt-1 text-[#828287]">{i?.creatorId?.firstName + " " + i?.creatorId?.lastName}</p>
