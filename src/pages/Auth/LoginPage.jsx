@@ -21,7 +21,13 @@ const LoginPage = () => {
                 toast.success("Login Sucessfull")
                 localStorage.setItem("id", response?.data?.data?._id);
                 localStorage.setItem("email", response?.data?.data?.email)
-                nav("/dashboard/home?query=Music");
+                if(response?.data?.data?.email==="admin@owlcast.com" || response?.data?.data?.role=="sub admin"){
+                    nav("/admin/dashboard/home");
+                }
+                else{
+                    nav("/dashboard/home?query=Music");
+                }
+
             } 
         } 
         catch (err) {
