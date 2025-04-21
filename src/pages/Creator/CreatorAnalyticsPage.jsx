@@ -169,12 +169,10 @@ const CreatorAnalyticsPage = () => {
     };
 
     const [data, setData] = useState([])
-    const [durations, setDurations] = useState({});
     const fetchData = async () => {
         try {
             const res = await axios.get(`${config.baseUrl}/music/creator/${localStorage.getItem("id")}`);
             const fetchedData = res?.data?.data;
-            // processChartData(fetchedData)
             setData(fetchedData);
         } catch (error) {
             console.error(error);

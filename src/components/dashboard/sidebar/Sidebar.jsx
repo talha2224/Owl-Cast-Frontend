@@ -17,6 +17,7 @@ loadStripe("pk_test_51OjJpTASyMRcymO6x2PBK1nrHChycNMNXj7HHvTRffOp5xufCj3WRSCLoep
 const Sidebar = () => {
   const { theme } = useTheme();
   const location = useLocation().pathname.split("/")[2];
+  const location2 = useLocation()
   const { isNavOpen, toggleNav } = useSidebar();
   const sidebarRef = useRef(null);
   const [showUpgrade, setshowUpgrade] = useState(false)
@@ -56,10 +57,10 @@ const Sidebar = () => {
   const handleSendMoney = async (amount) => {
     let loader = toast.loading("Processing Request")
     try {
-      let stripeRes = await axios.post(`${config.baseUrl2}/create-checkout-session`, { amount})
+      localStorage.setItem("amount", amount)
+      let stripeRes = await axios.post(`${config.baseUrl2}/create-checkout-session`, { amount })
       toast.dismiss(loader)
       window.location.href = stripeRes.data?.url;
-      localStorage.setItem("paid","paid")
     }
     catch (error) {
       toast.dismiss(loader)
@@ -67,6 +68,35 @@ const Sidebar = () => {
     }
   }
 
+  const handleAddSubscription = async () => {
+    try {
+      let amount = localStorage.getItem("amount")
+      let res = await axios.put(`${config?.baseUrl}/account/subscription/${localStorage.getItem("id")}`,{amount,planName:amount==5.99?"Student":amount==10.99?"Individual":"Family"})
+      console.log(res?.data, 'res?.data of handleAddSubscription')
+      localStorage.setItem("paid", "paid")
+      if (res?.data) {
+        nav("/dashboard/home?query=Music");
+      }
+    }
+    catch (error) {
+      console.log(error)
+    }
+  }
+
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location2.search);
+    const query = queryParams.get("query");
+
+    console.log(query,'query')
+
+    if (query === "success") {
+      handleAddSubscription()
+    }
+    else{
+      nav("/dashboard/home?query=Music");
+    }
+  }, [location]);
 
 
 
@@ -108,17 +138,14 @@ const Sidebar = () => {
           }
 
 
-          {/* { */}
-            {/* // !localStorage.getItem("paid") && ( */}
-              <div onClick={() => setshowUpgrade(true)} className='w-[100%] bg-[#262628] p-3 mt-3 cursor-pointer'>
-                <div className='flex items-center justify-between  text-white'>
+          {
+            !localStorage.getItem("paid") && (
+              <div onClick={() => setshowUpgrade(true)} className='w-[100%] bg-[#262628] p-3 mt-3 cursor-pointer flex items-center justify-between  text-white'>
                   <p className='text-sm text-[#808080]'>For Downloading</p>
                   <p className='text-xs text-[#E54B3C]'>Upgrade</p>
-                </div>
               </div>
-
-            {/* ) */}
-          {/* } */}
+            )
+          }
 
 
         </div>
@@ -200,7 +227,7 @@ const Sidebar = () => {
 
             <div className="space-y-4">
               {/* Student Plan */}
-              <div onClick={()=>handleSendMoney(5.99)} className="border border-[#8D8D8D] p-4 rounded-md hover:shadow-md cursor-pointer">
+              <div onClick={() => handleSendMoney(5.99)} className="border border-[#8D8D8D] p-4 rounded-md hover:shadow-md cursor-pointer">
                 <h3 className="text-lg font-bold mb-2">Student - $5.99/mo</h3>
                 <ul className="list-disc list-inside text-sm text-gray-400">
                   <li>Ad-free listening</li>
@@ -210,7 +237,7 @@ const Sidebar = () => {
               </div>
 
               {/* Individual Plan */}
-              <div onClick={()=>handleSendMoney(10.99)} className="border border-[#8D8D8D]r p-4 rounded-md hover:shadow-md cursor-pointer">
+              <div onClick={() => handleSendMoney(10.99)} className="border border-[#8D8D8D]r p-4 rounded-md hover:shadow-md cursor-pointer">
                 <h3 className="text-lg font-bold mb-2">Individual - $10.99/mo</h3>
                 <ul className="list-disc list-inside text-sm text-gray-400">
                   <li>Ad-free listening</li>
@@ -220,7 +247,7 @@ const Sidebar = () => {
               </div>
 
               {/* Family Plan */}
-              <div onClick={()=>handleSendMoney(16.99)} className="border border-[#8D8D8D] p-4 rounded-md hover:shadow-md cursor-pointer">
+              <div onClick={() => handleSendMoney(16.99)} className="border border-[#8D8D8D] p-4 rounded-md hover:shadow-md cursor-pointer">
                 <h3 className="text-lg font-bold mb-2">Family - $16.99/mo</h3>
                 <ul className="list-disc list-inside text-sm text-gray-400">
                   <li>6 accounts included</li>
