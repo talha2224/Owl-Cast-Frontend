@@ -84,19 +84,19 @@ const Sidebar = () => {
   }
 
 
-  useEffect(() => {
-    const queryParams = new URLSearchParams(location2.search);
-    const query = queryParams.get("query");
+  // useEffect(() => {
+  //   const queryParams = new URLSearchParams(location2.search);
+  //   const query = queryParams.get("query");
 
-    console.log(query,'query')
+  //   console.log(query,'query')
 
-    if (query === "success") {
-      handleAddSubscription()
-    }
-    else{
-      nav("/dashboard/home?query=Music");
-    }
-  }, [location]);
+  //   if (query === "success") {
+  //     handleAddSubscription()
+  //   }
+  //   else{
+  //     nav("/dashboard/home?query=Music");
+  //   }
+  // }, [location]);
 
 
 
