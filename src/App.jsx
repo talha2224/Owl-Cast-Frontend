@@ -25,6 +25,7 @@ import AdminUserPage from './pages/Admin/AdminUserPage';
 import AdminTransactionsPage from './pages/Admin/AdminTransactionsPage';
 import AdminSettingsPage from './pages/Admin/AdminSettingsPage';
 import AdminAnalyticsPage from './pages/Admin/AdminAnalyticsPage';
+import AdminOperatorPage from './pages/Admin/AdminOperatorPage';
 const RegisterPage = lazy(() => import('./pages/Auth/RegisterPage'));
 const Layout = lazy(() => import('./components/dashboard/Layout'));
 const CreatorLayout = lazy(() => import('./components/creator/Layout'));
@@ -93,6 +94,7 @@ function App() {
               <Route path="transactions" element={<AdminTransactionsPage />} />
               <Route path="analytics" element={<AdminAnalyticsPage />} />
               <Route path="settings" element={<AdminSettingsPage />} />
+              <Route path="operator" element={<AdminOperatorPage />} />
             </Route>
 
 

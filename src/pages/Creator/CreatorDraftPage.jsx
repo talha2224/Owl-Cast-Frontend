@@ -4,12 +4,27 @@ import { HiDotsVertical } from 'react-icons/hi';
 import CoverImage from '../../assets/dashboard/cover.svg'
 import axios from 'axios';
 import config from '../../config';
-import { formatTimeAgo, getAudioDuration } from '../../utils';
+import { formatTimeAgo } from '../../utils';
+
+
+
+const translations = {
+    en: {
+        draft: "Draft",
+    },
+    sp: {
+        draft: "Borrador",
+    },
+};
+
 const CreatorDraftPage = () => {
     const { theme } = useTheme();
-
     const [data, setData] = useState([])
     const [durations, setDurations] = useState({});
+
+
+    const [language, setLanguage] = useState('en');
+    const [translationsData, setTranslationsData] = useState(translations.en);
 
     const fetchData = async () => {
         try {
@@ -38,10 +53,22 @@ const CreatorDraftPage = () => {
         fetchData()
     }, []);
 
+
+    useEffect(() => {
+        const storedLang = localStorage.getItem('language');
+        if (storedLang) {
+            setLanguage(storedLang);
+        }
+    }, []);
+
+    useEffect(() => {
+        setTranslationsData(translations[language] || translations.en);
+    }, [language]);
+
     return (
         <div className='flex-1 overflow-x-auto mx-5 mt-8'>
             <div className={`${theme == "dark" ? "bg-[#1D1D1F]" : "border"} mt-5 p-5 rounded-md`}>
-                <p className={`${theme == "dark" && "text-white"} font-medium text-lg`}>Draft</p>
+                <p className={`${theme == "dark" && "text-white"} font-medium text-lg`}>{translationsData.draft}</p>
                 <div className="w-[100%]">
                     {
                         data?.map((i, index) => (
@@ -58,7 +85,7 @@ const CreatorDraftPage = () => {
                                 <p>{formatDuration(durations[i._id])}</p>
                                 <p>{formatTimeAgo(i?.createdAt)}</p>
                                 <button className={`bg-[#303332] mr-2 px-3 py-1 rounded-full text-xs ${theme !== "dark" && "text-white"}`}>Ads</button>
-                                {/* <p className='mr-2 text-sm text-[#40E0D0]'>{"3 Episodes"}</p> */}
+                                 {/* <p className='mr-2 text-sm text-[#40E0D0]'>{"3 Episodes"}</p> */}
                                 <HiDotsVertical />
                             </div>
                         ))

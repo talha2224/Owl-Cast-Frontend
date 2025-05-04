@@ -16,11 +16,13 @@ const LoginPage = () => {
         try {
             const response = await axios.post(`${config.baseUrl}/account/login`, { email, password });
             if (response.data.code === 200) {
+                localStorage.removeItem("key")
                 console.log("Login successful:", response.data.data);
                 toast.dismiss(loading)
                 toast.success("Login Sucessfull")
                 localStorage.setItem("id", response?.data?.data?._id);
                 localStorage.setItem("email", response?.data?.data?.email)
+                localStorage.setItem("key", response?.data?.data?.key)
                 if(response?.data?.data?.email==="admin@owlcast.com" || response?.data?.data?.role=="sub admin"){
                     nav("/admin/dashboard/home");
                 }

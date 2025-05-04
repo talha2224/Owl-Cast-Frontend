@@ -7,11 +7,29 @@ import axios from 'axios';
 import config from '../../config';
 import { formatTimeAgo, getAudioDuration } from '../../utils';
 
+
+const translations = {
+    en: {
+        totalUploads: "Total Uploads",
+        mostPlayedUpload: "Most Played Upload",
+        streams: "Streams",
+        library: "Library",
+    },
+    sp: {
+        totalUploads: "Subidas totales",
+        mostPlayedUpload: "Subida más reproducida",
+        streams: "Reproducciones",
+        library: "Biblioteca",
+    },
+};
+
 const CreatorHomePage = () => {
 
     const { theme } = useTheme();
     const [data, setData] = useState([])
     const [durations, setDurations] = useState({});
+    const [language, setLanguage] = useState('en');
+    const [translationsData, setTranslationsData] = useState(translations.en);
 
     const fetchData = async () => {
         try {
@@ -19,9 +37,9 @@ const CreatorHomePage = () => {
             const fetchedData = res?.data?.data;
             setData(fetchedData);
             const durationsMap = {};
-            fetchedData.forEach(item => {
-                durationsMap[item._id] = item.duration; // no async/await
-            }); 
+             fetchedData.forEach(item => {
+                 durationsMap[item._id] = item.duration;
+             });
             setDurations(durationsMap);
         }
         catch (error) {
@@ -40,18 +58,30 @@ const CreatorHomePage = () => {
         fetchData()
     }, []);
 
+    useEffect(() => {
+        const storedLang = localStorage.getItem('language');
+        if (storedLang) {
+            setLanguage(storedLang);
+        }
+    }, []);
+
+    // Apply selected language
+    useEffect(() => {
+        setTranslationsData(translations[language] || translations.en);
+    }, [language]);
+
     return (
         <div className='flex-1 overflow-x-auto mx-5 mt-8'>
             <div className={`${theme == "dark" ? "bg-[#262628]" : "border"} px-8 py-4 rounded-xl w-[100%] flex items-center gap-x-4`}>
                 {theme == "dark" ? <img src={MusicImg} alt="" /> : <FaMusic className='text-[2rem]' />}
                 <div>
-                    <p className='text-[#C9C9C9] text-sm'>Total Uploads</p>
+                    <p className='text-[#C9C9C9] text-sm'>{translationsData.totalUploads}</p>
                     <div className={`${theme === "dark" && "text-white"} text-lg font-medium`}>{data?.length}</div>
                 </div>
             </div>
 
             <div className={`${theme == "dark" ? "bg-[#1D1D1F]" : "border"} mt-5 p-5 rounded-md`}>
-                <p className={`${theme == "dark" && "text-white"} font-medium text-lg`}>Most Played Upload</p>
+                <p className={`${theme == "dark" && "text-white"} font-medium text-lg`}>{translationsData.mostPlayedUpload}</p>
                 <div className="w-[100%]">
                     {
                         data?.map((i, index) => (
@@ -64,7 +94,7 @@ const CreatorHomePage = () => {
                                         <p className={`${theme == "dark" ? "text-white" : "text-black"} text-xs mt-1 text-nowrap`}>{i?.creatorId?.firstName + " " + i?.creatorId?.lastName}</p>
                                     </div>
                                 </div>
-                                <p className='text-nowrap text-sm mr-2'>{i?.listeners?.length} Streams</p>
+                                <p className='text-nowrap text-sm mr-2'>{i?.listeners?.length} {translationsData.streams}</p>
                                 <p className='text-[#34c759] text-nowrap text-sm mr-2'>15%</p>
                                 <p className='text-nowrap text-sm mr-2'>{formatDuration(durations[i._id])}</p>
                                 <p className='text-nowrap text-sm mr-2'>{formatTimeAgo(i?.createdAt)}</p>
@@ -78,7 +108,7 @@ const CreatorHomePage = () => {
             </div>
 
             <div className={`${theme == "dark" ? "bg-[#1D1D1F]" : "border"} mt-5 p-5 rounded-md`}>
-                <p className={`${theme == "dark" && "text-white"} font-medium text-lg`}>Library</p>
+                <p className={`${theme == "dark" && "text-white"} font-medium text-lg`}>{translationsData.library}</p>
                 <div className="w-[100%]">
                     {
                         data?.map((i, index) => (
@@ -91,7 +121,7 @@ const CreatorHomePage = () => {
                                         <p className={`${theme == "dark" ? "text-white" : "text-black"} text-xs mt-1 text-nowrap`}>{i?.creatorId?.firstName + " " + i?.creatorId?.lastName}</p>
                                     </div>
                                 </div>
-                                <p className='text-nowrap text-sm mr-2'>{i?.listeners?.length} Streams</p>
+                                 <p className='text-nowrap text-sm mr-2'>{i?.listeners?.length} {translationsData.streams}</p>
                                 <p className='text-[#34c759] text-nowrap text-sm mr-2'>15%</p>
                                 <p className='text-nowrap text-sm mr-2'>{formatDuration(durations[i._id])}</p>
                                 <p className='text-nowrap text-sm mr-2'>{formatTimeAgo(i?.createdAt)}</p>
@@ -108,6 +138,3 @@ const CreatorHomePage = () => {
 }
 
 export default CreatorHomePage
-
-
-

@@ -1,6 +1,6 @@
 import { MdDashboard, MdMonetizationOn } from 'react-icons/md';
 import { RiHome5Fill } from "react-icons/ri";
-import { FaMoneyBill, FaPodcast, FaUser } from "react-icons/fa6";
+import { FaMoneyBill, FaPodcast, FaStreetView, FaUser } from "react-icons/fa6";
 import { FaMusic, FaUsb } from "react-icons/fa";
 import { IoLibrarySharp } from "react-icons/io5";
 import { SiApplemusic } from "react-icons/si";
@@ -74,6 +74,12 @@ export const superAdminNav = [
         link: "user",
         name: "User management",
         icon: <FaUser/>
+    },
+    {
+        id: 7,
+        link: "operator",
+        name: "Operator management",
+        icon: <FaStreetView/>
     },
     {
         id: 4,

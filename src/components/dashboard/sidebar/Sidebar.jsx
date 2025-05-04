@@ -151,7 +151,7 @@ const Sidebar = () => {
         </div>
 
         <div className='absolute bottom-5 w-[80%] flex justify-between items-center mx-5 '>
-          <div onClick={() => nav("/")} className='flex items-center gap-x-2 cursor-pointer'>
+          <div onClick={() =>{localStorage.removeItem("key");nav("/")}} className='flex items-center gap-x-2 cursor-pointer'>
             <IoLogOut className='text-[#FF1700] cursor-pointer text-xl' />
             <p className='text-xs text-[#FF1700]'>Logout</p>
           </div>
@@ -200,7 +200,7 @@ const Sidebar = () => {
             </div>
 
             <div className='absolute bottom-5 w-[80%] flex justify-between items-center mx-5 '>
-              <div onClick={() => nav("/")} className='flex items-center gap-x-2 cursor-pointer'>
+              <div onClick={() =>{localStorage.removeItem("key");nav("/")}} className='flex items-center gap-x-2 cursor-pointer'>
                 <IoLogOut className='text-[#FF1700] cursor-pointer text-xl' />
                 <p className='text-xs text-[#FF1700]'>Logout</p>
               </div>

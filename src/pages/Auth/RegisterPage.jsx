@@ -10,9 +10,9 @@ import toast from 'react-hot-toast';
 const RegisterPage = () => {
   const nav = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
-  const [data, setData] = useState({ preferrence: "music", role: "user", firstName: "", lastName: "", email: "", password: "", dob: "", country: "", aspect: "Music", agree: false, });
+  const [data, setData] = useState({ preferrence: "music", role: "user", firstName: "", lastName: "", email: "", password: "", dob: "", country: "", aspect: "Music", agree: false,key:"" });
   const [errors, setErrors] = useState({});
-  const [otp, setOtp] = useState(['', '', '', '',]);
+  const [otp, setOtp] = useState(['', '', '', '', '']);
   const inputRefs = useRef([]);
 
   useEffect(() => {
@@ -66,7 +66,7 @@ const RegisterPage = () => {
     if (currentStep === 3) {
       let loader = toast.loading("Processing Request")
       try {
-        const payload = { role: data.role, firstName: data.firstName, lastName: data.lastName, email: data.email, password: data.password, aspect: data.preferrence, dob: data.dob, country: data.country, };
+        const payload = { role: data.role, firstName: data.firstName, lastName: data.lastName, email: data.email, password: data.password, aspect: data.preferrence, dob: data.dob, country: data.country,key:data?.key };
         console.log(payload)
         const res = await axios.post(`${config.baseUrl}/account/register`, payload);
         if (res?.data?.data) {
@@ -74,6 +74,7 @@ const RegisterPage = () => {
           toast.success("Account Created Verify Your Email")
           localStorage.setItem("id", res?.data?.data?._id);
           localStorage.setItem("email", res?.data?.data?.email)
+          localStorage.setItem("key", res?.data?.data?.key)
           setCurrentStep(4);
         }
       }
@@ -91,8 +92,8 @@ const RegisterPage = () => {
   const handleVerify = async () => {
     const email = localStorage.getItem('email');
     const enteredOtp = otp.join('');
-    if (!enteredOtp || enteredOtp.length !== 4) {
-      toast.error("Please enter the complete 4-digit OTP");
+    if (!enteredOtp || enteredOtp.length !== 5) {
+      toast.error("Please enter the complete 5-digit OTP");
       return;
     }
     let loader = toast.loading("Verifying OTP...");
@@ -103,7 +104,7 @@ const RegisterPage = () => {
         toast.success("OTP Verified Successfully!");
         nav("/dashboard/home?query=" + data.preferrence);
       }
-    } 
+    }
     catch (err) {
       console.error(err.response?.data?.msg || "OTP verification failed");
       toast.dismiss(loader);
@@ -131,8 +132,25 @@ const RegisterPage = () => {
   return (
     <div className="flex justify-center items-center w-screen h-screen bg-[#262628] flex-col">
 
-      <div className="fixed top-10 right-24 cursor-pointer text-white">
-        <RxCross1 onClick={() => nav("/")} />
+      <div className="fixed top-10 cursor-pointer text-white w-full">
+
+        <div className='flex justify-between items-center px-10'>
+          <div className='flex-1 flex justify-center items-center gap-x-10 md:flex-row flex-col'>
+            <div className='flex items-center gap-x-4 md:mt-0 mt-5'>
+              <div className={`flex justify-center items-center w-[2rem] h-[2rem] border rounded-full ${currentStep==2?"bg-[#fff] text-black":"text-[#828287]"}`}>1</div>
+              <p className={`${currentStep==2?"text-[#fff]":"text-[#828287]"}`}>Add your email</p>
+            </div>
+            <div className='flex items-center gap-x-4 md:mt-0 mt-5'>
+              <div className={`flex justify-center items-center w-[2rem] h-[2rem] border rounded-full ${currentStep==3?"bg-[#fff] text-black":"text-[#828287]"}`}>2</div>
+              <p className={`${currentStep==3?"text-[#fff]":"text-[#828287]"}`}>Create Account</p>
+            </div>
+            <div className='flex items-center gap-x-4 md:mt-0 mt-5'>
+              <div className={`flex justify-center items-center w-[2rem] h-[2rem] border rounded-full ${currentStep==4?"bg-[#fff] text-black":"text-[#828287]"}`}>3</div>
+              <p className={`${currentStep==4?"text-[#fff]":"text-[#828287]"}`}>Confirm email</p>
+            </div>
+          </div>
+          <RxCross1 onClick={() => nav("/")} />
+        </div>
       </div>
 
       <img src={Logo} alt="Logo" className="h-[2rem]" />
@@ -187,24 +205,34 @@ const RegisterPage = () => {
 
       {currentStep === 3 && (
         <div>
+
+          <input type="text" name="firstName" value={data.firstName} onChange={handleChange} placeholder="First Name" className="block w-[20rem] h-[2.5rem] text-white border border-[#444444] px-3 bg-transparent outline-none rounded-md mt-3 placeholder:text-sm placeholder:text-[#808080]" />
+          {errors.firstName && <p className="text-red-500 text-xs">{errors.firstName}</p>}
+
+          <input type="text" name="lastName" value={data.lastName} onChange={handleChange} placeholder="Last Name" className="block w-[20rem] h-[2.5rem] text-white border border-[#444444] px-3 bg-transparent outline-none rounded-md mt-3 placeholder:text-sm placeholder:text-[#808080]" />
+          {errors.lastName && <p className="text-red-500 text-xs">{errors.lastName}</p>}
+
           <input type="password" name="password" value={data.password} onChange={handleChange} placeholder="Password" className="block w-[20rem] h-[2.5rem] text-white border border-[#444444] px-3 bg-transparent outline-none rounded-md mt-3 placeholder:text-sm placeholder:text-[#808080]" />
           {errors.password && <p className="text-red-500 text-xs">{errors.password}</p>}
 
-          <input type="text" name="firstName" value={data.firstName} onChange={handleChange} placeholder="First Name" className="block w-[20rem] h-[2.5rem] text-white border border-[#444444] px-3 bg-transparent outline-none rounded-md mt-3 placeholder:text-sm placeholder:text-[#808080]"
-          />
-          {errors.firstName && <p className="text-red-500 text-xs">{errors.firstName}</p>}
+          <div className='flex items-start gap-x-3 w-[20rem]'>
 
-          <input type="text" name="lastName" value={data.lastName} onChange={handleChange} placeholder="Last Name" className="block w-[20rem] h-[2.5rem] text-white border border-[#444444] px-3 bg-transparent outline-none rounded-md mt-3 placeholder:text-sm placeholder:text-[#808080]"
-          />
-          {errors.lastName && <p className="text-red-500 text-xs">{errors.lastName}</p>}
+            <div className='flex-1'>
+              <input type="date" name="dob" value={data.dob} onChange={handleChange} placeholder="Date Of Birth" className="block w-[9.5rem] h-[2.5rem] text-white border border-[#444444] px-3 bg-transparent outline-none rounded-md mt-3 placeholder:text-sm placeholder:text-[#808080]" />
+              {errors.dob && <p className="text-red-500 text-xs">{errors.dob}</p>}
+            </div>
 
-          <input type="text" name="dob" value={data.dob} onChange={handleChange} placeholder="Date Of Birth" className="block w-[20rem] h-[2.5rem] text-white border border-[#444444] px-3 bg-transparent outline-none rounded-md mt-3 placeholder:text-sm placeholder:text-[#808080]"
-          />
-          {errors.dob && <p className="text-red-500 text-xs">{errors.dob}</p>}
+            <div className='flex-1'>
+              <input type="text" name="country" value={data.country} onChange={handleChange} placeholder="Country" className="block w-[9.5rem] h-[2.5rem] text-white border border-[#444444] px-3 bg-transparent outline-none rounded-md mt-3 placeholder:text-sm placeholder:text-[#808080]" />
+              {errors.country && <p className="text-red-500 text-xs">{errors.country}</p>}
+            </div>
 
-          <input type="text" name="country" value={data.country} onChange={handleChange} placeholder="Country" className="block w-[20rem] h-[2.5rem] text-white border border-[#444444] px-3 bg-transparent outline-none rounded-md mt-3 placeholder:text-sm placeholder:text-[#808080]"
-          />
-          {errors.country && <p className="text-red-500 text-xs">{errors.country}</p>}
+          </div>
+
+          <input type="text" name="key" value={data?.key} onChange={handleChange} placeholder="Operator Key" className="block w-[20rem] h-[2.5rem] text-white border border-[#444444] px-3 bg-transparent outline-none rounded-md mt-3 placeholder:text-sm placeholder:text-[#808080]" />
+
+
+
 
           <div className="mt-2 flex items-center gap-x-2">
             <input type="checkbox" name="agree" checked={data.agree} onChange={handleChange} />

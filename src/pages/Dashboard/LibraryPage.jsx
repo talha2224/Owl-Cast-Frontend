@@ -1,13 +1,39 @@
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../../context/ThemeContext";
-import { CiStar } from "react-icons/ci";
-import PreviewImage from '../../assets/dashboard/preview2.svg'
-import PreviewImage2 from '../../assets/dashboard/preview.svg'
 import { useEffect, useState } from "react";
 import config from "../../config";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { TiTick } from "react-icons/ti";
+
+
+const translations = {
+    en: {
+        myPlaylists: "My Playlists",
+        addNewPlaylist: "+ Add new playlist",
+        selectPlaylist: "Select Your Playlist",
+        playlistTitle: "Playlist Title",
+        titlePlaceholder: "Title",
+        create: "Create",
+        or: "Or",
+        next: "Next",
+        addSongs: "Add Songs",
+        selectPlaylistToLink: "Select a playlist to link the music or podcast.",
+    },
+    sp: {
+        myPlaylists: "Mis listas de reproducción",
+        addNewPlaylist: "+ Agregar nueva lista de reproducción",
+        selectPlaylist: "Selecciona tu lista de reproducción",
+        playlistTitle: "Título de la lista de reproducción",
+        titlePlaceholder: "Título",
+        create: "Crear",
+        or: "O",
+        next: "Siguiente",
+        addSongs: "Agregar Canciones",
+        selectPlaylistToLink: "Selecciona una lista de reproducción para vincular la música o el podcast.",
+    },
+};
+
 
 const playlistButtons = [
     { label: "+ Add new playlist", color: null, isAddButton: true },
@@ -18,11 +44,28 @@ const playlistButtons = [
 const LibraryPage = () => {
     const { theme } = useTheme();
     const nav = useNavigate();
+    const [key] = useState(localStorage.getItem("key"))
+
     const [playlistData, setPlaylistData] = useState([]);
     const [musicData, setMusicData] = useState([])
     const [initialStep, setInitialStep] = useState(0);
     const [playlistName, setPlaylistName] = useState("");
     const [data, setData] = useState({ playlistId: "", music: [] })
+
+    const [language, setLanguage] = useState('en');
+    const [translationsData, setTranslationsData] = useState(translations.en);
+
+    useEffect(() => {
+        const storedLang = localStorage.getItem('language');
+        if (storedLang) {
+            setLanguage(storedLang);
+        }
+    }, []);
+
+    useEffect(() => {
+        setTranslationsData(translations[language] || translations.en);
+    }, [language]);
+
 
     const fetchAllPlaylist = async () => {
         try {
@@ -38,9 +81,17 @@ const LibraryPage = () => {
 
     const fetchAllMusic = async () => {
         try {
-            let playlist = await axios.get(`${config.baseUrl}/music/all`)
-            if (playlist?.data) {
-                setMusicData(playlist?.data?.data)
+            if (key) {
+                let playlist = await axios.get(`${config.baseUrl}/operator/${key}`)
+                if (playlist?.data) {
+                    setMusicData(playlist?.data?.data?.music)
+                }
+            }
+            else {
+                let playlist = await axios.get(`${config.baseUrl}/music/all`)
+                if (playlist?.data) {
+                    setMusicData(playlist?.data?.data)
+                }
             }
         }
         catch (error) {
@@ -92,7 +143,7 @@ const LibraryPage = () => {
     return (
         <div className='flex-1 overflow-x-auto p-5'>
 
-            <p className={`${theme == "dark" && "text-white"} font-medium text-lg`}>My Playlists</p>
+            <p className={`${theme == "dark" && "text-white"} font-medium text-lg`}>{translationsData.myPlaylists}</p>
 
             <div className="flex flex-wrap gap-2 mt-6">
 
@@ -145,8 +196,8 @@ const LibraryPage = () => {
 
                         <div className="flex justify-between items-start mb-4">
                             <div>
-                                <h2 className="text-lg font-medium">Select Your Playlist</h2>
-                                <p className='text-xs text-[#8D8D8D] mt-1'>Select a playlist to link the music or podcast.</p>
+                                <h2 className="text-lg font-medium">{translationsData.selectPlaylist}</h2>
+                                <p className='text-xs text-[#8D8D8D] mt-1'>{translationsData.selectPlaylistToLink}</p>
                             </div>
                             <button onClick={() => setInitialStep(0)} className="focus:outline-none">
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -156,10 +207,10 @@ const LibraryPage = () => {
                         </div>
 
 
-                        <p className='text-sm'>Playlist Title</p>
-                        <input onChange={(e) => setPlaylistName(e.target.value)} type="text" name="" id="" placeholder='Title' className='w-[100%] h-[2.3rem] px-3 rounded-md border border-[#444444] bg-transparent mt-2 text-sm placeholder:text-sm' />
-                        <button onClick={handleCreatePlaylist} className="rounded-md border border-[#444444] bg-transparent w-[100%] h-[2.3rem] mt-2 text-sm">Create</button>
-                        <p className='text-center mt-2 text-sm'>Or</p>
+                        <p className='text-sm'>{translationsData.playlistTitle}</p>
+                        <input onChange={(e) => setPlaylistName(e.target.value)} type="text" name="" id="" placeholder={translationsData.titlePlaceholder} className='w-[100%] h-[2.3rem] px-3 rounded-md border border-[#444444] bg-transparent mt-2 text-sm placeholder:text-sm' />
+                        <button onClick={handleCreatePlaylist} className="rounded-md border border-[#444444] bg-transparent w-[100%] h-[2.3rem] mt-2 text-sm">{translationsData.create}</button>
+                        <p className='text-center mt-2 text-sm'>{translationsData.or}</p>
                         {
                             playlistData?.map((i) => (
                                 <div key={i?._id} onClick={() => { setData({ ...data, playlistId: i?._id, music: [...i?.music] }) }} className='flex cursor-pointer justify-between items-center w-[100%] textsm text-white bg-[#262628] px-3 h-[2.5rem] border border-[#444444] mt-2 rounded-md text-sm'>
@@ -168,7 +219,7 @@ const LibraryPage = () => {
                                 </div>
                             ))
                         }
-                        <button onClick={() => { setInitialStep(2) }} className="bg-[#FF1700] text-sm w-[100%] py-2 mt-2 rounded-md">Next</button>
+                        <button onClick={() => { setInitialStep(2) }} className="bg-[#FF1700] text-sm w-[100%] py-2 mt-2 rounded-md">{translationsData.next}</button>
 
                     </div>
                 </div>
@@ -180,7 +231,7 @@ const LibraryPage = () => {
 
                         <div className="flex justify-between items-start mb-4">
                             <div>
-                                <h2 className="text-lg font-medium">Select Your Playlist</h2>
+                                <h2 className="text-lg font-medium">{translationsData.selectPlaylist}</h2>
                                 <p className='text-xs text-[#8D8D8D] mt-1'>Select a playlist to link the music or podcast.</p>
                             </div>
                             <button onClick={() => setInitialStep(0)} className="focus:outline-none">
@@ -198,7 +249,7 @@ const LibraryPage = () => {
                                 </div>
                             ))
                         }
-                        <button onClick={handleAddSong} className="bg-[#FF1700] text-sm w-[100%] py-2 mt-2 rounded-md">Add</button>
+                        <button onClick={handleAddSong} className="bg-[#FF1700] text-sm w-[100%] py-2 mt-2 rounded-md">{translationsData.addSongs}</button>
 
                     </div>
                 </div>

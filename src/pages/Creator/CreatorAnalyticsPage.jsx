@@ -7,13 +7,53 @@ import Chart from 'react-apexcharts';
 import axios from 'axios';
 import config from '../../config';
 
-const generateRandomData = (count) => {
-    return Array.from({ length: count }, () => Math.floor(Math.random() * 1500));
+
+
+const translations = {
+    en: {
+        totalStreams: "Total Streams",
+        totalListeners: "Total Listeners",
+        totalEarnings: "Total Earnings",
+        avgListeningDuration: "Avg. Listening Duration",
+        streamOverTime: "Stream Over Time",
+        contentPerformance: "Content Performance",
+        title: "Title",
+        streams: "Streams",
+        completionRate: "Completion Rate",
+        earnings: "Earnings",
+        topCountries: "Top countries",
+        deviceSplit: "Device Split",
+        total: "Total",
+        desktop: "Desktop",
+        mobile: "Mobile",
+        tablet: "Tablet"
+    },
+    sp: {
+        totalStreams: "Transmisiones totales",
+        totalListeners: "Oyentes totales",
+        totalEarnings: "Ganancias totales",
+        avgListeningDuration: "Duración promedio de escucha",
+        streamOverTime: "Transmisión a lo largo del tiempo",
+        contentPerformance: "Rendimiento del contenido",
+        title: "Título",
+        streams: "Transmisiones",
+        completionRate: "Tasa de finalización",
+        earnings: "Ganancias",
+        topCountries: "Países principales",
+        deviceSplit: "División de dispositivos",
+        total: "Total",
+        desktop: "Escritorio",
+        mobile: "Móvil",
+        tablet: "Tableta"
+    },
 };
 
 const CreatorAnalyticsPage = () => {
     const { theme } = useTheme();
     const cardStyle = `${theme == "dark" ? "bg-[#262628]" : "border"} p-3 max-w-[20rem] min-w-[20rem] rounded-lg flex items-center gap-x-4`
+
+    const [language, setLanguage] = useState('en');
+    const [translationsData, setTranslationsData] = useState(translations.en);
 
     const areaChartData = {
         series: [
@@ -140,7 +180,7 @@ const CreatorAnalyticsPage = () => {
             stroke: {
                 width: 0,
             },
-            labels: ['Desktop', 'Mobile', 'Tablet'],
+            labels: [translationsData.desktop, translationsData.mobile, translationsData.tablet],
             legend: {
                 show: false,
             },
@@ -354,6 +394,16 @@ const CreatorAnalyticsPage = () => {
 
 
 
+    useEffect(() => {
+        const storedLang = localStorage.getItem('language');
+        if (storedLang) {
+            setLanguage(storedLang);
+        }
+    }, []);
+
+    useEffect(() => {
+        setTranslationsData(translations[language] || translations.en);
+    }, [language]);
 
     return (
         <div className='flex-1 overflow-x-auto mx-5 mt-8'>
@@ -364,7 +414,7 @@ const CreatorAnalyticsPage = () => {
                 <div className={cardStyle}>
                     <BsBarChartFill className='text-[2rem] text-[#FF543E]' />
                     <div>
-                        <p className={`${theme == "dark" && "text-white"} text-sm`}>Total Streams</p>
+                        <p className={`${theme == "dark" && "text-white"} text-sm`}>{translationsData.totalStreams}</p>
                         <p className='text-[#FF543E]'>{count()}</p>
                     </div>
                 </div>
@@ -372,7 +422,7 @@ const CreatorAnalyticsPage = () => {
                 <div className={cardStyle}>
                     <FaUsers className='text-[2rem] text-[#FFDD55]' />
                     <div>
-                        <p className={`${theme == "dark" && "text-white"} text-sm`}>Total Listeners</p>
+                        <p className={`${theme == "dark" && "text-white"} text-sm`}>{translationsData.totalListeners}</p>
                         <p className='text-[#FFDD55]'>{count()}</p>
                     </div>
                 </div>
@@ -380,15 +430,15 @@ const CreatorAnalyticsPage = () => {
                 <div className={cardStyle}>
                     <AiFillDollarCircle className='text-[2rem] text-[#34C759]' />
                     <div>
-                        <p className={`${theme == "dark" && "text-white"} text-sm`}>Total Earnings</p>
-                        <p className='text-[#34C759]'>{count() * 0.001}</p>
+                        <p className={`${theme == "dark" && "text-white"} text-sm`}>{translationsData.totalEarnings}</p>
+                        <p className='text-[#34C759]'>${(count() * 0.001).toFixed(2)}</p>
                     </div>
                 </div>
 
                 <div className={cardStyle}>
                     <FaStopwatch className='text-[2rem] text-[#0090FF]' />
                     <div>
-                        <p className={`${theme == "dark" && "text-white"} text-sm`}>Avg. Listening Duration</p>
+                        <p className={`${theme == "dark" && "text-white"} text-sm`}>{translationsData.avgListeningDuration}</p>
                         <p className='text-[#0090FF]'>3 mins per session</p>
                     </div>
                 </div>
@@ -400,7 +450,7 @@ const CreatorAnalyticsPage = () => {
                 <div className={`${theme == "dark" ? "bg-[#1D1D1F]" : "border"} p-4 sm:w-[25rem] w-[100%] rounded-lg`}>
 
                     <div className='flex justify-between items-center'>
-                        <p className={`${theme == "dark" && "text-white"}`}>Stream Over Time</p>
+                        <p className={`${theme == "dark" && "text-white"}`}>{translationsData.streamOverTime}</p>
                         <button className={`${theme == "dark" ? "bg-[#262628] text-white" : "border"} px-4 py-1 text-xs rounded-full`}>7 days</button>
                     </div>
                     {/* REAL DATA HERE  */}
@@ -411,15 +461,15 @@ const CreatorAnalyticsPage = () => {
                 </div>
 
                 <div className={`${theme === 'dark' ? 'bg-[#1D1D1F]' : 'border'} p-4 flex-1 rounded-lg`}>
-                    <h3 className={`${theme === 'dark' ? 'text-white' : 'text-gray-800'} mb-4 font-semibold`}>Content Performance</h3>
+                    <h3 className={`${theme === 'dark' ? 'text-white' : 'text-gray-800'} mb-4 font-semibold`}>{translationsData.contentPerformance}</h3>
                     <div className="overflow-x-auto">
                         <table className="w-full">
                             <thead className="text-left text-xs text-gray-500">
                                 <tr>
-                                    <th className="py-2 pr-4">Title</th>
-                                    <th className="py-2 pr-4">Streams</th>
-                                    <th className="py-2 pr-4">Completion Rate</th>
-                                    <th className="py-2 pr-4">Earnings</th>
+                                    <th className="py-2 pr-4">{translationsData.title}</th>
+                                    <th className="py-2 pr-4">{translationsData.streams}</th>
+                                    <th className="py-2 pr-4">{translationsData.completionRate}</th>
+                                    <th className="py-2 pr-4">{translationsData.earnings}</th>
                                     <th className="py-2"></th>
                                 </tr>
                             </thead>
@@ -429,7 +479,7 @@ const CreatorAnalyticsPage = () => {
                                         <td className={`${theme === 'dark' ? 'text-white' : 'text-gray-800'} py-2 pr-4 text-sm`}>{item.title}</td>
                                         <td className={`${theme === 'dark' ? 'text-white' : 'text-gray-800'} py-2 pr-4 text-sm`}>{item.listeners?.length.toLocaleString()}</td>
                                         <td className={`${theme === 'dark' ? 'text-white' : 'text-gray-800'} py-2 pr-4 text-sm`}>  {Math.floor(Math.random() * (95 - 50 + 1)) + 50}%</td>
-                                        <td className={`${theme === 'dark' ? 'text-white' : 'text-gray-800'} py-2 pr-4 text-sm`}>${(item.listeners?.length * 0.001)}</td>
+                                        <td className={`${theme === 'dark' ? 'text-white' : 'text-gray-800'} py-2 pr-4 text-sm`}>${(item.listeners?.length * 0.001).toFixed(2)}</td>
                                         <td className="py-2 text-gray-500">
                                             <BsThreeDotsVertical />
                                         </td>
@@ -446,18 +496,17 @@ const CreatorAnalyticsPage = () => {
             <div className='flex items-start gap-x-10 flex-wrap mt-10'>
 
                 <div className={`${theme == "dark" ? "bg-[#1D1D1F]" : "border"} p-4 sm:w-[25rem] w-[100%] rounded-lg`}>
-                    <p className={`${theme == "dark" && "text-white"}`}>Top countries</p>
+                    <p className={`${theme == "dark" && "text-white"}`}>{translationsData.topCountries}</p>
                     {/* REAL DATA HERE */}
-                    <div className="mt-4"> {/* Adjust margin as needed */}
+                    <div className="mt-4">
                         <Chart options={processedCountryChartData.options} series={processedCountryChartData.series} type="bar" height={180} />
                     </div>
                 </div>
 
 
-                {/*NO NEED OF REAL DATA HERE  */}
 
                 <div className={`${theme === 'dark' ? 'bg-[#1D1D1F]' : 'border'} p-4 flex-1 rounded-lg flex flex-col`}>
-                    <p className={`${theme === 'dark' && 'text-white'} font-semibold mb-4`}>Device Split</p>
+                    <p className={`${theme === 'dark' && 'text-white'} font-semibold mb-4`}>{translationsData.deviceSplit}</p>
 
                     <div className='flex justify-between items-center flex-wrap'>
                         <div className="flex items-center justify-center relative mt-2">
@@ -466,23 +515,23 @@ const CreatorAnalyticsPage = () => {
                                 <p className={`${theme === 'dark' ? 'text-white' : 'text-gray-800'} text-lg font-semibold`}>
                                     {(deviceSplitData.series.reduce((sum, value) => sum + value, 0)).toLocaleString()}
                                 </p>
-                                <p className="text-xs text-gray-500">Total</p>
+                                <p className="text-xs text-gray-500">{translationsData.total}</p>
                             </div>
                         </div>
                         <div className="mt-2 flex flex-col gap-y-2">
                             <div className="flex items-center gap-x-2">
                                 <div className="w-2 h-2 rounded-full bg-[#34C759]"></div>
-                                <p className={`${theme === 'dark' ? 'text-white' : 'text-gray-800'} text-sm`}>Desktop</p>
+                                <p className={`${theme === 'dark' ? 'text-white' : 'text-gray-800'} text-sm`}>{translationsData.desktop}</p>
                                 <p className="text-sm text-gray-500 ml-auto">{deviceSplitData.series[0].toLocaleString()}</p>
                             </div>
                             <div className="flex items-center gap-x-2">
                                 <div className="w-2 h-2 rounded-full bg-[#0090FF]"></div>
-                                <p className={`${theme === 'dark' ? 'text-white' : 'text-gray-800'} text-sm`}>Mobile</p>
+                                <p className={`${theme === 'dark' ? 'text-white' : 'text-gray-800'} text-sm`}>{translationsData.mobile}</p>
                                 <p className="text-sm text-gray-500 ml-auto">{deviceSplitData.series[1].toLocaleString()}</p>
                             </div>
                             <div className="flex items-center gap-x-2">
                                 <div className="w-2 h-2 rounded-full bg-[#FFDD55]"></div>
-                                <p className={`${theme === 'dark' ? 'text-white' : 'text-gray-800'} text-sm`}>Tablet</p>
+                                <p className={`${theme === 'dark' ? 'text-white' : 'text-gray-800'} text-sm`}>{translationsData.tablet}</p>
                                 <p className="text-sm text-gray-500 ml-auto">{deviceSplitData.series[2].toLocaleString()}</p>
                             </div>
                         </div>

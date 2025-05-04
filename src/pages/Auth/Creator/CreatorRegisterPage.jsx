@@ -12,7 +12,7 @@ const CreatorRegisterPage = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [data, setData] = useState({ preferrence: "music", role: "creator", firstName: "", lastName: "", email: "", password: "", dob: "", country: "", aspect: "Music", agree: false, });
   const [errors, setErrors] = useState({});
-  const [otp, setOtp] = useState(['', '', '', '',]);
+  const [otp, setOtp] = useState(['', '', '', '','']);
   const inputRefs = useRef([]);
 
   useEffect(() => {
@@ -91,8 +91,8 @@ const CreatorRegisterPage = () => {
   const handleVerify = async () => {
     const email = localStorage.getItem('email');
     const enteredOtp = otp.join('');
-    if (!enteredOtp || enteredOtp.length !== 4) {
-      toast.error("Please enter the complete 4-digit OTP");
+    if (!enteredOtp || enteredOtp.length !== 5) {
+      toast.error("Please enter the complete 5-digit OTP");
       return;
     }
     let loader = toast.loading("Verifying OTP...");

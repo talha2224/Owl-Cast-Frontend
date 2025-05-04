@@ -7,11 +7,28 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import axios from "axios";
 import config from '../../config'
-import { FaBackward, FaForward } from 'react-icons/fa6';
+import { FaBackward, FaForward, FaPlay } from 'react-icons/fa6';
 import { RxCross1, RxLoop } from 'react-icons/rx';
 import { CiPause1 } from 'react-icons/ci';
 
+
+const translations = {
+    en: {
+        aiCuratedPodcast: "AI-Curated Podcast",
+        newReleases: "New Releases",
+        recent: "Recent",
+        trendingPodcast: "Trending Podcast",
+    },
+    sp: {
+        aiCuratedPodcast: "Podcast curado por IA",
+        newReleases: "Nuevos lanzamientos",
+        recent: "Reciente",
+        trendingPodcast: "Podcast de tendencia",
+    },
+};
+
 const MusicPage = () => {
+    const [key] = useState(localStorage.getItem("key"))
     const { theme } = useTheme();
     const nav = useNavigate()
     const [playingIndex, setPlayingIndex] = useState(0);
@@ -23,18 +40,41 @@ const MusicPage = () => {
     const [isPlaying, setIsPlaying] = useState(true);
     const [currentTime, setCurrentTime] = useState(0);
 
+    const [language, setLanguage] = useState('en');
+    const [translationsData, setTranslationsData] = useState(translations.en);
+
+
     const fetchData = async () => {
         try {
-            let res = await axios.get(`${config.baseUrl}/music/all`);
-            const fetchedData = res?.data?.data;
-            setMixData(fetchedData)
-            setPodcastData(fetchedData)
 
-            const durationsMap = {};
-            fetchedData.forEach(item => {
-                durationsMap[item._id] = item.duration; // no async/await
-            });
-            setDurations(durationsMap);
+            if (key) {
+
+
+                let res = await axios.get(`${config.baseUrl}/operator/${key}`);
+                const fetchedData = res?.data?.data?.music;
+                setMixData(fetchedData)
+                setPodcastData(fetchedData)
+
+                const durationsMap = {};
+                fetchedData.forEach(item => {
+                    durationsMap[item._id] = item.duration; // no async/await
+                });
+                setDurations(durationsMap);
+
+            }
+
+            else {
+                let res = await axios.get(`${config.baseUrl}/music/all`);
+                const fetchedData = res?.data?.data;
+                setMixData(fetchedData)
+                setPodcastData(fetchedData)
+
+                const durationsMap = {};
+                fetchedData.forEach(item => {
+                    durationsMap[item._id] = item.duration; // no async/await
+                });
+                setDurations(durationsMap);
+            }
 
         }
         catch (error) {
@@ -89,32 +129,44 @@ const MusicPage = () => {
     }, [playingIndex]);
 
 
+    useEffect(() => {
+        const storedLang = localStorage.getItem('language');
+        if (storedLang) {
+            setLanguage(storedLang);
+        }
+    }, []);
+
+    useEffect(() => {
+        setTranslationsData(translations[language] || translations.en);
+    }, [language]);
+
+
     return (
         <div className='flex-1 overflow-x-auto p-5'>
 
             <audio src={playingIndex?.audio} ref={audioRef} autoPlay />
 
 
-            <p className={`${theme == "dark" && "text-white"} font-medium text-lg`}>AI-Curated Podcast</p>
+            <p className={`${theme == "dark" && "text-white"} font-medium text-lg`}>{translationsData.aiCuratedPodcast}</p>
 
             <div className='flex items-center overflow-x-auto gap-x-7 mt-8'>
                 {
                     podcastData.map((i) => (
-                        <img onClick={() => nav(`/dashboard/podcast/single/${i?._id}`)} key={i?._id} src={i?.image} className='cursor-pointer w-[20rem] h-[12rem] rounded-xl' />
+                        <img onClick={() => nav(`/dashboard/podcast/single/${i?._id}`)} key={i?._id} src={i?.image} className='cursor-pointer w-[20rem] h-[20rem] rounded-xl' />
                     ))
                 }
             </div>
 
             <div className="flex justify-between items-center w-[100%]">
-                <p className={`${theme == "dark" && "text-white"} font-medium text-lg mt-10`}>New Releases</p>
-                <p className="text-[#828287]">Recent</p>
+                <p className={`${theme == "dark" && "text-white"} font-medium text-lg mt-10`}>{translationsData.newReleases}</p>
+                <p className="text-[#828287]">{translationsData.recent}</p>
             </div>
 
             <div className="mt-10 flex gap-x-5 items-center flex-wrap">
                 {
                     podcastData?.map((i, index) => (
-                        <div onClick={() => nav(`/dashboard/podcast/single/${i?._id}`)} key={index} className="mb-5 flex-1 min-w-[15rem] cursor-pointer">
-                            <img src={i % 2 == 0 ? Podcast : Podcast2} alt="" />
+                        <div onClick={() => nav(`/dashboard/podcast/single/${i?._id}`)} key={index} className="mb-5 min-w-[15rem] cursor-pointer">
+                            <img src={i?.image} alt="" className='w-[12rem] h-[12rem]' />
                             <p className="mt-2 text-white">{i?.title}</p>
                             <p className="mt-1 text-[#828287]">{i?.creatorId?.firstName + " " + i?.creatorId?.lastName}</p>
                         </div>
@@ -123,7 +175,7 @@ const MusicPage = () => {
             </div>
 
             <div className="flex justify-between items-center w-[100%]">
-                <p className={`${theme == "dark" && "text-white"} font-medium text-lg mt-10`}>Trending Podcast</p>
+                <p className={`${theme == "dark" && "text-white"} font-medium text-lg mt-10`}>{translationsData.trendingPodcast}</p>
             </div>
 
             <div className={`mt-6 px-5 flex items-center gap-x-10 flex-wrap`}>
@@ -131,7 +183,7 @@ const MusicPage = () => {
                     mixData.map((i, index) => (
                         <div onClick={() => { setPlayingIndex(i); if (audioRef.current) { audioRef.current.load(); audioRef.current.play(); setIsPlaying(true); } }} key={index} className="flex justify-between items-center mb-4 w-[15rem] cursor-pointer">
                             <div className="flex items-center flex-wrap">
-                                <img src={CoverImage} alt="" className="w-10 h-10 my-2" />
+                                <img src={i?.image} alt="" className="w-10 h-10 my-2" />
                                 <div className="ml-3 my-2">
                                     <p className={`${theme == "dark" ? "text-white" : "text-black"} font-medium text-sm`}>{i?.title}</p>
                                     <p className={`${theme == "dark" ? "text-white" : "text-black"} text-xs mt-1`}>{i?.creatorId?.firstName + " " + i?.creatorId?.lastName}</p>
