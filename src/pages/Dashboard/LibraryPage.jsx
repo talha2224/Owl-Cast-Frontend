@@ -81,7 +81,7 @@ const LibraryPage = () => {
 
     const fetchAllMusic = async () => {
         try {
-            if (key) {
+            if (key && key!=="null") {
                 let playlist = await axios.get(`${config.baseUrl}/operator/${key}`)
                 if (playlist?.data) {
                     setMusicData(playlist?.data?.data?.music)

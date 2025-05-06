@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { FaAngleRight, FaBackward, FaForward, FaPlay } from "react-icons/fa6";
 import { AiOutlineExpandAlt } from "react-icons/ai";
 import { RxCross1, RxLoop } from "react-icons/rx";
-import { CiPause1 } from "react-icons/ci";
+import { CiPause1, CiShuffle } from "react-icons/ci";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import config from '../../config';
@@ -63,13 +63,13 @@ const HomePage = () => {
   const audioRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
-
+  const [isShuffle, setIsShuffle] = useState(false);
+  const [isLoop, setIsLoop] = useState(false);
 
   const fetchData = async () => {
     try {
 
-
-      if (key) {
+      if (key && key !== "null") {
         let res = await axios.get(`${config.baseUrl}/operator/${key}`);
         const fetchedData = res?.data?.data?.music;
         const durationsMap = {};
@@ -175,18 +175,39 @@ const HomePage = () => {
       }
     };
 
-    audio.addEventListener('timeupdate', updateTime);
-
     const handleLoadedMetadata = () => {
       setCurrentTime(audio.currentTime);
     };
+
     audio.addEventListener('loadedmetadata', handleLoadedMetadata);
+    audio.addEventListener('timeupdate', updateTime);
+
+    const handleEnded = () => {
+      if (isLoop) {
+        audio.currentTime = 0;
+        audio.play();
+      }
+      else {
+        let nextTrack;
+        if (isShuffle) {
+          const randomIndex = Math.floor(Math.random() * musicData.length);
+          nextTrack = musicData[randomIndex];
+        } else {
+          const currentIndex = musicData.findIndex(item => item._id === playingIndex?._id);
+          nextTrack = musicData[(currentIndex + 1) % musicData.length];
+        }
+        updateListners(nextTrack);
+      }
+    };
+
+    audio.addEventListener('ended', handleEnded);
 
     return () => {
+      audio.removeEventListener('ended', handleEnded);
       audio.removeEventListener('timeupdate', updateTime);
       audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
     };
-  }, [playingIndex]);
+  }, [isLoop, isShuffle, playingIndex, musicData]);
 
   return (
     <div className="flex-1 overflow-x-auto lg:flex items-start flex-wrap lg:h-[100%] relative">
@@ -242,6 +263,7 @@ const HomePage = () => {
               ))}
             </div>
           </div>
+
         </div>
       )}
 
@@ -406,10 +428,7 @@ const HomePage = () => {
       )}
 
       {expandView && (
-        <div
-          style={{ backgroundImage: `url(${playingIndex?.image})` }}
-          className="w-screen h-screen p-5 fixed top-0 left-0 bg-no-repeat bg-cover flex justify-center items-center flex-col"
-        >
+        <div style={{ backgroundImage: `url(${playingIndex?.image})` }} className="w-screen h-screen p-5 fixed top-0 left-0 bg-no-repeat bg-cover flex justify-center items-center flex-col">
           <img src={playingIndex?.image} alt={playingIndex?.title} className="h-[20rem] mb-5 rounded-md" />
 
           <div className='fixed top-10 right-24 cursor-pointer text-white'>
@@ -425,14 +444,13 @@ const HomePage = () => {
             <div className="flex items-center gap-4 text-white">
               <p>{formatDuration(currentTime)}</p>
               <div className="flex-1 bg-[#444444] h-[5px] rounded-full relative overflow-hidden">
-                <div
-                  className="h-[5px] bg-[#FF1700] rounded-full absolute top-0 left-0"
-                  style={{ width: `${(currentTime / durations[playingIndex._id]) * 100}%` }}
-                />
+                <div className="h-[5px] bg-[#FF1700] rounded-full absolute top-0 left-0" style={{ width: `${(currentTime / durations[playingIndex._id]) * 100}%` }} />
               </div>
               <p>-{formatDuration(durations[playingIndex._id] - currentTime)}</p>
             </div>
             <div className="flex justify-center mt-5 gap-x-6">
+              <CiShuffle onClick={() => setIsShuffle(prev => !prev)} className="text-white cursor-pointer" />
+
               <FaBackward onClick={handleBackward} className="text-white cursor-pointer" />
               {isPlaying ? (
                 <CiPause1 onClick={handlePlayPause} className="text-white text-xl cursor-pointer" />
@@ -440,6 +458,7 @@ const HomePage = () => {
                 <FaPlay onClick={handlePlayPause} className="text-white text-xl cursor-pointer" />
               )}
               <FaForward onClick={handleForward} className="text-white cursor-pointer" />
+              <RxLoop onClick={() => setIsLoop(prev => !prev)} className="text-white cursor-pointer" />
             </div>
           </div>
         </div>

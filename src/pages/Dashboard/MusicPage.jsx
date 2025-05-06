@@ -47,7 +47,7 @@ const MusicPage = () => {
     const fetchData = async () => {
         try {
 
-            if (key) {
+            if (key && key!=="null") {
 
 
                 let res = await axios.get(`${config.baseUrl}/operator/${key}`);

@@ -57,12 +57,27 @@ const translations = {
     },
 };
 
+const options = [
+    {
+        label: 'United States',
+        img: 'https://cdn.britannica.com/79/4479-050-6EF87027/flag-Stars-and-Stripes-May-1-1795.jpg',
+        code: 'en',
+    },
+    {
+        label: 'Spain',
+        img: 'https://upload.wikimedia.org/wikipedia/en/9/9a/Flag_of_Spain.svg',
+        code: 'sp',
+    },
+];
+
+
 const ProfilePage = () => {
     const { theme } = useTheme();
     const [isPaymentMethodsOpen, setIsPaymentMethodsOpen] = useState(false);
     const [isAddPaymentMethodOpen, setIsAddPaymentMethodOpen] = useState(false);
     const [language, setLanguage] = useState('en');
     const [translationsData, setTranslationsData] = useState(translations.en);
+    const storedLang = localStorage.getItem('language');
 
 
     let containerStyle = `${theme === "dark" ? "text-gray-300 bg-[#1A1A1B] hover:bg-[#262628]" : "text-gray-700 bg-gray-100 hover:bg-gray-200"} flex items-center justify-between rounded-md px-3 py-3 text-sm cursor-pointer`;
@@ -88,7 +103,6 @@ const ProfilePage = () => {
 
 
     useEffect(() => {
-        const storedLang = localStorage.getItem('language');
         if (storedLang) {
             setLanguage(storedLang);
         }
@@ -134,11 +148,11 @@ const ProfilePage = () => {
                     <p className="text-sm mr-2">{translationsData.countryRegion}</p>
                     <div className="flex items-center gap-x-3">
                         <img
-                            src="https://cdn.britannica.com/79/4479-050-6EF87027/flag-Stars-and-Stripes-May-1-1795.jpg"
+                            src={storedLang=="en"?options[0]?.img:options[1]?.img}
                             alt=""
                             className="h-[1rem] w-[1rem] rounded-full"
                         />
-                        <div className="text-sm">United States</div>
+                        <div className="text-sm">{storedLang=="en"?options[0]?.label:options[1]?.label}</div>
                     </div>
                 </div>
 
