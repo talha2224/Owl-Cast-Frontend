@@ -168,7 +168,7 @@ const MusicPage = () => {
                         <div onClick={() => nav(`/dashboard/podcast/single/${i?._id}`)} key={index} className="mb-5 min-w-[15rem] cursor-pointer">
                             <img src={i?.image} alt="" className='w-[12rem] h-[12rem]' />
                             <p className="mt-2 text-white">{i?.title}</p>
-                            <p className="mt-1 text-[#828287]">{i?.creatorId?.firstName + " " + i?.creatorId?.lastName}</p>
+                            <p className="mt-1 text-[#828287]">{i?.creatorId?.firstName?(i?.creatorId?.firstName + " " + i?.creatorId?.lastName):"Admin"}</p>
                         </div>
                     ))
                 }
@@ -186,7 +186,7 @@ const MusicPage = () => {
                                 <img src={i?.image} alt="" className="w-10 h-10 my-2" />
                                 <div className="ml-3 my-2">
                                     <p className={`${theme == "dark" ? "text-white" : "text-black"} font-medium text-sm`}>{i?.title}</p>
-                                    <p className={`${theme == "dark" ? "text-white" : "text-black"} text-xs mt-1`}>{i?.creatorId?.firstName + " " + i?.creatorId?.lastName}</p>
+                                    <p className={`${theme == "dark" ? "text-white" : "text-black"} text-xs mt-1`}>{i?.creatorId?.firstName?(i?.creatorId?.firstName + " " + i?.creatorId?.lastName):"Admin"}</p>
                                 </div>
                             </div>
                             <HiOutlineDotsVertical className={`${theme == "dark" && "text-white"}`} />
@@ -207,7 +207,7 @@ const MusicPage = () => {
                                 <img src={playingIndex?.image} alt="" className="w-[3rem] h-[3rem] rounded-md" />
                                 <div className="ml-3">
                                     <p className={`${theme == "dark" ? "text-white" : "text-black"} font-medium `}>{playingIndex?.title}</p>
-                                    <p className={`${theme == "dark" ? "text-white" : "text-black"} mt-1`}>{playingIndex?.creatorId?.firstName + " " + playingIndex?.creatorId?.lastName}</p>
+                                    <p className={`${theme == "dark" ? "text-white" : "text-black"} mt-1`}>{playingIndex?.creatorId?.firstName?(playingIndex?.creatorId?.firstName + " " + playingIndex?.creatorId?.lastName):"Admin"}</p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-x-4">

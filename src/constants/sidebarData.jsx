@@ -19,19 +19,19 @@ export const navData = [
         id: 7,
         link: "podcast",
         name: "Podcast",
-        icon: <FaPodcast/>
+        icon: <FaPodcast />
     },
     {
         id: 8,
         link: "music",
         name: "Music",
-        icon: <FaMusic/>
+        icon: <FaMusic />
     },
     {
         id: 9,
         link: "library",
         name: "Library",
-        icon: <IoLibrarySharp/>
+        icon: <IoLibrarySharp />
     }
 ];
 
@@ -40,13 +40,13 @@ export const adminNav = [
         id: 1,
         link: "home",
         name: "My Uploads",
-        icon: <SiApplemusic/>
+        icon: <SiApplemusic />
     },
     {
         id: 7,
         link: "library",
         name: "Library",
-        icon: <MdLibraryMusic/>
+        icon: <MdLibraryMusic />
     },
     {
         id: 4,
@@ -67,19 +67,25 @@ export const superAdminNav = [
         id: 1,
         link: "home",
         name: "Dashboard",
-        icon: <MdDashboard/>
+        icon: <MdDashboard />
     },
     {
         id: 7,
         link: "user",
         name: "User management",
-        icon: <FaUser/>
+        icon: <FaUser />
     },
     {
         id: 7,
         link: "operator",
         name: "Operator management",
-        icon: <FaStreetView/>
+        icon: <FaStreetView />
+    },
+    {
+        id: 41,
+        link: "library",
+        name: "Library",
+        icon: <MdLibraryMusic />
     },
     {
         id: 4,
@@ -91,12 +97,12 @@ export const superAdminNav = [
         id: 41,
         link: "analytics",
         name: "Analytics",
-        icon: <SiGoogleanalytics/>
+        icon: <SiGoogleanalytics />
     },
     {
         id: 44,
         link: "settings",
         name: "Settings",
-        icon: <IoMdSettings/>
+        icon: <IoMdSettings />
     }
 ]

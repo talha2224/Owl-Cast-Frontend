@@ -182,7 +182,7 @@ const PodcastPage = () => {
                                 <img src={i?.image} alt="" className="w-10 h-10 my-2" />
                                 <div className="ml-3 my-2">
                                     <p className={`${theme == "dark" ? "text-white" : "text-black"} font-medium text-sm`}>{i?.title}</p>
-                                    <p className={`${theme == "dark" ? "text-white" : "text-black"} text-xs mt-1`}>{i?.creatorId?.firstName + " " + i?.creatorId?.lastName}</p>
+                                    <p className={`${theme == "dark" ? "text-white" : "text-black"} text-xs mt-1`}>{i?.creatorId?.firstName?(i?.creatorId?.firstName + " " + i?.creatorId?.lastName):"Admin"}</p>
                                 </div>
                             </div>
                             <HiOutlineDotsVertical className={`${theme == "dark" && "text-white"}`} />

@@ -252,7 +252,7 @@ const HomePage = () => {
                     </div>
                     <div className="ml-3">
                       <p className={`${theme === "dark" ? "text-white" : "text-black"} font-medium text-sm`}>{i?.title}</p>
-                      <p className={`${theme === "dark" ? "text-white" : "text-black"} text-xs mt-1`}>{i?.creatorId?.firstName + " " + i?.creatorId?.lastName}</p>
+                      <p className={`${theme === "dark" ? "text-white" : "text-black"} text-xs mt-1`}>{i?.creatorId?.firstName?(i?.creatorId?.firstName + " " + i?.creatorId?.lastName):"Admin"}</p>
                     </div>
                   </div>
                   <p>{i?.listeners?.length} Listeners</p>
@@ -292,7 +292,7 @@ const HomePage = () => {
                   <img src={i?.image} alt={i?.title} className="w-10 h-10 rounded-md" />
                   <div className="ml-3">
                     <p className={`${theme === "dark" ? "text-white" : "text-black"} font-medium text-sm`}>{i?.title}</p>
-                    <p className={`${theme === "dark" ? "text-white" : "text-black"} text-xs mt-1`}>{i?.creatorId?.firstName + " " + i?.creatorId?.lastName}</p>
+                    <p className={`${theme === "dark" ? "text-white" : "text-black"} text-xs mt-1`}>{i?.creatorId?.firstName?(i?.creatorId?.firstName + " " + i?.creatorId?.lastName):"Admin"}</p>
                   </div>
                 </div>
                 <FaAngleRight className={`${theme === "dark" && "text-white"}`} />
@@ -340,7 +340,7 @@ const HomePage = () => {
               >
                 <img src={i?.image} alt={i?.title} className="w-[13rem] h-[13rem] rounded-md" />
                 <p className="mt-2 text-white">{i?.title}</p>
-                <p className="mt-1 text-[#828287]">{i?.creatorId?.firstName + " " + i?.creatorId?.lastName}</p>
+                <p className="mt-1 text-[#828287]">{i?.creatorId?.firstName?(i?.creatorId?.firstName + " " + i?.creatorId?.lastName):"Admin"}</p>
               </div>
             ))}
           </div>
@@ -365,7 +365,7 @@ const HomePage = () => {
               >
                 <img src={i?.image} alt={i?.title} className="w-[13rem] h-[13rem] rounded-md" />
                 <p className="mt-2 text-white">{i?.title}</p>
-                <p className="mt-1 text-[#828287]">{i?.creatorId?.firstName + " " + i?.creatorId?.lastName}</p>
+                <p className="mt-1 text-[#828287]">{i?.creatorId?.firstName?(i?.creatorId?.firstName + " " + i?.creatorId?.lastName):"Admin"}</p>
               </div>
             ))}
           </div>
@@ -382,7 +382,7 @@ const HomePage = () => {
               <img src={playingIndex?.image} alt={playingIndex?.title} className="w-[3rem] h-[3rem] rounded-md" />
               <div className="ml-3">
                 <p className={`${theme === "dark" ? "text-white" : "text-black"} font-medium `}>{playingIndex?.title}</p>
-                <p className={`${theme === "dark" ? "text-white" : "text-black"} mt-1`}>{playingIndex?.creatorId?.firstName + " " + playingIndex?.creatorId?.lastName}</p>
+                <p className={`${theme === "dark" ? "text-white" : "text-black"} mt-1`}>{playingIndex?.creatorId?.firstName?(playingIndex?.creatorId?.firstName + " " + playingIndex?.creatorId?.lastName):"Admin"}</p>
               </div>
             </div>
             <div className="flex items-center gap-x-4">

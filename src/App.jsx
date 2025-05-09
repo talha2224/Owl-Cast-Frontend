@@ -26,6 +26,7 @@ import AdminTransactionsPage from './pages/Admin/AdminTransactionsPage';
 import AdminSettingsPage from './pages/Admin/AdminSettingsPage';
 import AdminAnalyticsPage from './pages/Admin/AdminAnalyticsPage';
 import AdminOperatorPage from './pages/Admin/AdminOperatorPage';
+import AdminLibraryPage from './pages/Admin/AdminLibraryPage';
 const RegisterPage = lazy(() => import('./pages/Auth/RegisterPage'));
 const Layout = lazy(() => import('./components/dashboard/Layout'));
 const CreatorLayout = lazy(() => import('./components/creator/Layout'));
@@ -67,15 +68,15 @@ function App() {
             <Route path='/creator/login' element={<CreatorLoginPage />} />
             <Route path='/creator/register' element={<CreatorRegisterPage />} />
 
-            <Route path='/admin/login' element={<AdminLoginPage/>} />
-            
+            <Route path='/admin/login' element={<AdminLoginPage />} />
+
             <Route path="/dashboard/" element={<Layout />}>
               <Route path="home" element={<HomePage />} />
               <Route path="podcast" element={<PodcastPage />} />
               <Route path="podcast/single/:id" element={<SinglePage />} />
               <Route path="music" element={<MusicPage />} />
               <Route path="library" element={<LibraryPage />} />
-              <Route path="profile" element={<ProfilePage/>} />
+              <Route path="profile" element={<ProfilePage />} />
             </Route>
 
             <Route path="/creator/dashboard/" element={<CreatorLayout />}>
@@ -84,7 +85,7 @@ function App() {
               <Route path="analytics" element={<CreatorAnalyticsPage />} />
               <Route path="draft" element={<CreatorDraftPage />} />
               <Route path="monetization" element={<CreatorMonetizationPage />} />
-              <Route path="profile" element={<CreatorProfilePage/>} />
+              <Route path="profile" element={<CreatorProfilePage />} />
             </Route>
 
 
@@ -95,6 +96,7 @@ function App() {
               <Route path="analytics" element={<AdminAnalyticsPage />} />
               <Route path="settings" element={<AdminSettingsPage />} />
               <Route path="operator" element={<AdminOperatorPage />} />
+              <Route path="library" element={<AdminLibraryPage/>} />
             </Route>
 
 
