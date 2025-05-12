@@ -332,7 +332,7 @@ const AdminLibraryPage = () => {
                                 // <img src={data?.previewUrl2} alt="Uploaded Preview" className="w-full h-full object-contain rounded-lg" />
                             ) : (
                                 <>
-                                    <p className='text-sm text-[#AAAAAA]'>Upload your mp4 file</p>
+                                    <p className='text-sm text-[#AAAAAA]'>Upload your mp3 file</p>
                                     <p className='text-sm text-[#FF1700]'>Min *390* x *190*</p>
                                 </>
                             )}
