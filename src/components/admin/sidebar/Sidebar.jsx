@@ -111,6 +111,7 @@ const Sidebar = () => {
       if (res?.data?.data) {
         toast.dismiss(loader)
         toast.success("Uploading Sucessfull")
+        setData({ duration: "", type: "music", creatorId: localStorage.getItem("id"), playlistId: null, audio: null, image: null, title: "", description: "", tags: "", })
         setinitialStep(0)
       }
     }
