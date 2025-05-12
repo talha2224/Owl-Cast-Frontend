@@ -11,6 +11,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { FiPlus } from 'react-icons/fi';
 import { TiTick } from 'react-icons/ti';
+import { IoIosArrowBack } from "react-icons/io";
 
 const Sidebar = () => {
   const { theme } = useTheme();
@@ -228,7 +229,7 @@ const Sidebar = () => {
                 <h2 className="text-lg font-medium">Upload your content</h2>
                 <p className='text-xs text-[#8D8D8D] mt-1'>Upload your music or podcast, use the recommended size for your cover image</p>
               </div>
-              <button onClick={() => setinitialStep(0)} className="focus:outline-none">
+              <button onClick={() =>{setinitialStep(0);setData({ duration: "", type: "music", creatorId: localStorage.getItem("id"), playlistId: null, audio: null, image: null, title: "", description: "", tags: "", })}} className="focus:outline-none">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -263,11 +264,12 @@ const Sidebar = () => {
           <div className={`${theme === "dark" ? "bg-[#1A1A1B] text-gray-300" : "bg-white text-gray-700"} rounded-md shadow-lg p-6 w-full max-w-md`}>
 
             <div className="flex justify-between items-start mb-4">
+              
               <div>
                 <h2 className="text-lg font-medium">Upload your content</h2>
                 <p className='text-xs text-[#8D8D8D] mt-1'>Upload your music or podcast, use the recommended size for your cover image</p>
               </div>
-              <button onClick={() => setinitialStep(0)} className="focus:outline-none">
+              <button onClick={() =>{setinitialStep(0);setData({ duration: "", type: "music", creatorId: localStorage.getItem("id"), playlistId: null, audio: null, image: null, title: "", description: "", tags: "", })}} className="focus:outline-none">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -293,6 +295,7 @@ const Sidebar = () => {
             </label>
 
             <button onClick={() => setinitialStep(3)} className="bg-[#FF1700] text-sm w-[100%] py-2 mt-2 rounded-md">Next</button>
+            <button onClick={() => setinitialStep(1)} className="bg-[#262628] text-sm w-[100%] py-2 mt-2 rounded-md">Back</button>
 
           </div>
         </div>
@@ -307,7 +310,7 @@ const Sidebar = () => {
                 <h2 className="text-lg font-medium">Upload your content</h2>
                 <p className='text-xs text-[#8D8D8D] mt-1'>Upload your music or podcast, use the recommended size for your cover image</p>
               </div>
-              <button onClick={() => setinitialStep(0)} className="focus:outline-none">
+              <button onClick={() =>{setinitialStep(0);setData({ duration: "", type: "music", creatorId: localStorage.getItem("id"), playlistId: null, audio: null, image: null, title: "", description: "", tags: "", })}} className="focus:outline-none">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -328,7 +331,7 @@ const Sidebar = () => {
             </label>
 
             <button onClick={() => setinitialStep(4)} className="bg-[#FF1700] text-sm w-[100%] py-2 mt-2 rounded-md">Next</button>
-
+            <button onClick={() => setinitialStep(2)} className="bg-[#262628] text-sm w-[100%] py-2 mt-2 rounded-md">Back</button>
           </div>
         </div>
       )}
@@ -342,7 +345,7 @@ const Sidebar = () => {
                 <h2 className="text-lg font-medium">Upload your content</h2>
                 <p className='text-xs text-[#8D8D8D] mt-1'>Upload your music or podcast, use the recommended size for your cover image</p>
               </div>
-              <button onClick={() => setinitialStep(0)} className="focus:outline-none">
+              <button onClick={() =>{setinitialStep(0);setData({ duration: "", type: "music", creatorId: localStorage.getItem("id"), playlistId: null, audio: null, image: null, title: "", description: "", tags: "", })}} className="focus:outline-none">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -356,6 +359,7 @@ const Sidebar = () => {
 
             <button onClick={() => { handleUpload("Active") }} className="bg-[#FF1700] text-sm w-[100%] py-2 mt-2 rounded-md">Publish Now</button>
             <button onClick={() => { handleUpload("Draft") }} className="text-sm w-[100%] py-2 mt-2 rounded-md">Draft</button>
+            <button onClick={() => setinitialStep(3)} className="bg-[#262628] text-sm w-[100%] py-2 mt-2 rounded-md">Back</button>
 
           </div>
         </div>

@@ -3,8 +3,8 @@
 //     baseUrl2:"http://localhost:3001",
 // }
 const config = {
-    baseUrl:"https://owl-cast-backend.vercel.app/api/v1",
-    baseUrl2:"https://owl-cast-backend.vercel.app",
+    baseUrl:"https://owl-cast-backend.onrender.com/api/v1",
+    baseUrl2:"https://owl-cast-backend.onrender.com/api/v1",
 }
 
 export default config
